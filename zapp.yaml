@@ -1,0 +1,10 @@
+name: RPTCLI01
+version: 1.0.1
+propertyGroups:
+  - name: cobol-local
+    language: cobol
+    libraries:
+      - name: syslib
+        type: local
+        locations:
+          - "./MainframeCopybooks"
