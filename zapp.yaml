@@ -7,4 +7,4 @@ propertyGroups:
       - name: syslib
         type: local
         locations:
-          - "./MainframeCopybooks"
+          - "./Copylib"

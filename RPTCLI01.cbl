@@ -31,12 +31,12 @@
        FILE SECTION.                                                    
       *-------------*                                                   
        FD SALIDA
-          BLOCK CONTAINS 0 RECORDS
-          RECORDING MODE IS F
-          LINAGE IS 20 LINES
-          WITH FOOTING AT 18
-          LINES AT TOP 1
-          LINES AT BOTTOM 1.                                     
+           BLOCK CONTAINS 0 RECORDS
+           RECORDING MODE IS F
+           LINAGE IS 60 LINES
+           WITH FOOTING AT 55
+           LINES AT TOP 3
+           LINES AT BOTTOM 2.                                     
                                                                         
        01 REG-SALIDA              PIC X(132).                           
                                                                         
@@ -50,97 +50,98 @@
           88 WS-FSS-OK                    VALUE '00'. 
                                                                         
       * INDICADOR DE CORTE DEL PROGRAMA *
-       01 WS-IND-PROGRAMA    PIC X(1)     VALUE 'A'.
-          88 IND-PGM-ACTIVO               VALUE 'F'.                 
+       01 WS-PROGRAMA        PIC X(1)     VALUE 'A'.
+          88 PGM-FIN                      VALUE 'F'.                 
                       
       * INDICADOR DE OPERACION EN CURSO *
-       01 WS-IND-OPERACION   PIC X(1)     VALUE SPACE.
-          88 IND-ABRIENDO-CURSOR          VALUE 'A'.
-          88 IND-LEYENDO-CURSOR           VALUE 'L'.
-          88 IND-CERRANDO-CURSOR          VALUE 'C'.
-          88 IND-ABRIENDO-SALIDA          VALUE 'S'.
-          88 IND-GRABANDO-SALIDA          VALUE 'G'.
-          88 IND-CERRANDO-SALIDA          VALUE 'X'.
+       01 WS-OPERACION      PIC X(1)      VALUE SPACE.
+          88 CURSOR-ABIERTO               VALUE 'A'.
+          88 CURSOR-LECTURA               VALUE 'L'.
+          88 CURSOR-CERRADO               VALUE 'C'.
+          88 SALIDA-ABIERTO               VALUE 'S'.
+          88 SALIDA-GRABAR                VALUE 'G'.
+          88 SALIDA-CERRADO               VALUE 'X'.
                      
       * INDICADOR DE LINEA A IMPRIMIR *
        01 WS-IND-LINEA        PIC 9       VALUE 0.
           88 IND-TITULO                   VALUE 1.
-          88 IND-SUBTITULO-ANIO           VALUE 2.
+          88 IND-SUBTITULO-DEPT           VALUE 2.
           88 IND-SUBTITULO-SEXO           VALUE 3.
           88 IND-COLUMNAS                 VALUE 4.
           88 IND-DETALLE                  VALUE 5.
           88 IND-SUBTOTAL-SEXO            VALUE 6.
-          88 IND-TOTAL-ANIO               VALUE 7.                    
+          88 IND-TOTAL-DEPT               VALUE 7.                    
                                                                         
-      * CONTROL DE LINEAS IMPRESAS POR CAMBIO DE CURSOR                 
+      * VALORES ANTERIORES PARA CONTROL DE CORTE *                 
        01 WS-DATO-ANTERIOR.                                             
-          05 WS-ANIO-ANT     PIC X(4)     VALUE SPACES.               
+          05 WS-DEPT-ANT     PIC X(4)     VALUE SPACES.               
           05 WS-SEXO-ANT     PIC X        VALUE SPACES.               
                                                                         
-      * TOTALIZADORES / CONTADORES *                                    
-       01 WS-TOTALES.                                                   
-          05 WS-CLI-SEX      PIC 9(3)     VALUE ZEROS.                
-          05 WS-CLI-ANIO     PIC 9(3)     VALUE ZEROS.                
-          05 WS-TOTAL-LEIDOS PIC 9(3)     VALUE ZEROS.                
-          05 WS-TOTAL-IMPRES PIC 9(3)     VALUE ZEROS.                
+      * CONTADORES DE CORTE *
+       01 WS-CONTADORES-CORTE.
+          05 WS-CNT-SEXO     PIC 9(4)    VALUE ZEROS.
+          05 WS-CNT-DEPT     PIC 9(4)    VALUE ZEROS.
+
+      * CONTADORES GLOBALES *
+       01 WS-CONTADORES-TOTAL.
+          05 WS-CNT-LEIDOS   PIC 9(4)    VALUE ZEROS.
+          05 WS-CNT-IMPRESOS PIC 9(4)    VALUE ZEROS.
+                                                                       
+       77 WS-MASCARA          PIC Z(4)   VALUE ZEROS.                
                                                                         
-       77 WS-MASCARA         PIC Z(3)      VALUE ZEROS.                
+      * INCLUDE SQLCA Y DCLGEN *                      
+           EXEC SQL INCLUDE SQLCA END-EXEC.                        
+           EXEC SQL INCLUDE DCLGEMP END-EXEC. 
+           EXEC SQL INCLUDE DCLGDEPT END-EXEC.                    
                                                                         
-      * ACTIVACION SQLCODE + VARIABLES DCLGEN *                         
-                EXEC SQL INCLUDE SQLCA END-EXEC.                        
-                EXEC SQL INCLUDE TBCURCLI END-EXEC.                     
+      * DECLARACION DE CURSOR - CLIENTES POR ANIO Y SEXO *
+           EXEC SQL
+             DECLARE EMPDEPT-CURSOR CURSOR FOR
+               SELECT E.EMPNO,
+                      E.FIRSTNME,
+                      E.LASTNAME,
+                      E.WORKDEPT,
+                      D.DEPTNAME,
+                      E.SEX,
+                      E.SALARY
+               FROM   IBMUSER.EMP  E,
+                      IBMUSER.DEPT D
+               WHERE  E.WORKDEPT = D.DEPTNO
+               ORDER BY E.WORKDEPT, E.SEX
+           END-EXEC.  
                                                                         
-      * CURSOR CLIENTE DUPLICADO *                                      
+      * COPYs ARCHIVO DE SALIDA y ESTRUCTURA DE ERRORES  * 
+       COPY CPRPT001. 
+       COPY CPERROR. 
                                                                         
-      ******************************************************************
-      * LA QUERY RETORNA LAS COLUMNAS SELECCIONADAS DE CADA REGISTRO Y *
-      * ORDENADO EL RESULTADO POR EL CORTE SUPERIOR Y LUEGO INFERIOR   *
-      ******************************************************************
-           EXEC SQL                                                     
-             DECLARE ITEM CURSOR FOR                                    
-               SELECT NROCLI,                                           
-                      NOMAPE,                                           
-                      FECNAC,                                           
-                      SEXO                                              
-                    FROM KC02803.TBCURCLI                               
-                    ORDER BY FECNAC ASC,                                
-                             SEXO                                       
-           END-EXEC.                                                    
-                                                                        
-      * COPY ARCHIVO DE SALIDA *                                        
-                                                                        
-       COPY CPERROR.                                                    
-                                                                        
-       77  FILLER            PIC X(26)    VALUE '* FINAL  WS *'.        
+       77  FILLER            PIC X(26)    VALUE '* FINAL  WS *'. 
                                                                         
       ******************************************************************
        PROCEDURE DIVISION.                                              
       ******************************************************************
-       DECLARATIVES.                                                    
-       ERROR-FILES SECTION.                                             
-            USE AFTER STANDARD ERROR PROCEDURE ON OUTPUT.               
-       MANEJADOR-PROCESO.                                               
-            IF WS-WRITE-SFILE                                           
-               SET WS-CLOSE-SFILE TO TRUE                               
-               CLOSE SALIDA                                             
-            END-IF                                                      
-            DISPLAY WS-ACCION WS-CODE-SAL                               
-            SET WS-PGM-FIN TO TRUE                                      
-            GO TO 2000-F-PROCESO.                                       
-       END DECLARATIVES.                                                
+       DECLARATIVES.
+      *----------------------------------------------------------------*
+      * SECCION DE ERROR I/O — ARCHIVO SALIDA                          *
+      *----------------------------------------------------------------*
+       ERROR-SALIDA SECTION.
+           USE AFTER STANDARD ERROR PROCEDURE ON OUTPUT.
+       MANEJADOR-ERROR-SALIDA.
+           MOVE 'RPTCLI01'        TO WS-ERR-PROGRAMA
+           MOVE WS-OPERACION    TO WS-ERR-ACCION
+           MOVE WS-FS-SALIDA      TO WS-ERR-FILE-STATUS
+           SET  ERR-ES-BATCH      TO TRUE
+           CALL 'PGMERROR'        USING WS-ERROR
+           SET  PGM-FIN         TO TRUE
+           .
+       END DECLARATIVES.                                           
                                                                         
-           EXEC SQL                                                     
-             WHENEVER SQLERROR GO TO 2400-CERRAR-CURSOR                 
-           END-EXEC                                                     
-                                                                        
-           EXEC SQL                                                     
-             WHENEVER NOT FOUND GO TO 2400-CERRAR-CURSOR                
-           END-EXEC                                                     
+           EXEC SQL WHENEVER SQLERROR CONTINUE END-EXEC               
+           EXEC SQL WHENEVER NOT FOUND CONTINUE END-EXEC .  
                                                                         
        MAIN-PROGRAM.                                                    
                                                                         
            PERFORM 1000-I-INICIO  THRU 1000-F-INICIO                    
-           PERFORM 2000-I-PROCESO THRU 2000-F-PROCESO UNTIL WS-PGM-FIN  
+           PERFORM 2000-I-PROCESO THRU 2000-F-PROCESO UNTIL PGM-FIN 
            PERFORM 3000-I-FINAL   THRU 3000-F-FINAL                     
            .                                                            
        F-MAIN-PROGRAM. GOBACK.                                          
@@ -152,17 +153,32 @@
       * EVALUATE TRUE SE MANEJA EL FLUJO DE EJECUCION Y MENSAJES       *
       ******************************************************************
                                                                         
-       1000-I-INICIO.                                                   
+       1000-I-INICIO.
+
+           MOVE FUNCTION FORMATTED-CURRENT-DATE("%d/%m/%Y")
+               TO WS-RPT-FECHA
+
+           INITIALIZE WS-CONTADORES-TOTAL
+                      WS-CONTADORES-CORTE
+                      WS-ACUMULADORES-TOTAL
+                      WS-ACUMULADORES-CORTE
+
+           MOVE 'RPTCLI01' TO WS-ERR-PROGRAMA
+           SET  ERR-ES-BATCH TO TRUE
+           
+
+                                             
                                                                         
-           ACCEPT WS-FECHA    FROM DATE        *> MANEJO DE LA FECHA    
-           MOVE   WS-FECHA-AA TO WS-AA                                  
-           MOVE   WS-FECHA-MM TO WS-MM                                  
-           MOVE   WS-FECHA-DD TO WS-DD                                  
+           SET  WS-OPEN-SFILE TO TRUE        *> APERTURA ARCHIVO SALIDA 
+           OPEN OUTPUT SALIDA                                           
                                                                         
-           INITIALIZE WS-TOTAL-LEIDOS          *> LIMPIAR TOTALES GRALES
-                      WS-TOTAL-IMPRES                                   
-           .                                                            
-       1000-F-INICIO.   EXIT.                                           
+           SET WS-OPEN-CURSOR TO TRUE         *> APERTURA DE CURSOR     
+           EXEC SQL OPEN EMPDEPT-CURSOR END-EXEC                                  
+           EXIT PARAGRAPH.    
+
+
+           .
+       1000-F-INICIO. EXIT.                                           
                                                                         
       ******************************************************************
       *                 CUERPO PRINCIPAL DE PROCESOS                   *
@@ -225,15 +241,7 @@
                                                                         
            END-PERFORM *> -------| FINAL PERFORM EXTERIOR |--------- <* 
            EXIT PARAGRAPH.                                              
-                                                                        
-       2100-ABRIR-RECURSOS.                                             
-                                                                        
-           SET  WS-OPEN-SFILE TO TRUE        *> APERTURA ARCHIVO SALIDA 
-           OPEN OUTPUT SALIDA                                           
-                                                                        
-           SET WS-OPEN-CURSOR TO TRUE         *> APERTURA DE CURSOR     
-           EXEC SQL OPEN ITEM END-EXEC                                  
-           EXIT PARAGRAPH.                                              
+                                                                                                                 
                                                                         
        2200-LEER-CURSOR.                                                
                                                                         
