@@ -38,32 +38,32 @@
            LINES AT TOP 3
            LINES AT BOTTOM 2.                                     
                                                                         
-       01 REG-SALIDA             PIC X(132).                           
+       01 REG-SALIDA            PIC X(132).                           
                                                                         
       *------------------------*                                        
        WORKING-STORAGE SECTION.                                         
       *------------------------*                                        
-       77 FILLER                 PIC X(26)  VALUE '* INICIO WS *'.       
+       77 FILLER                PIC X(26)   VALUE '* INICIO WS *'.       
                                                                         
       * CONTROL FILES STATUS SALIDA *                                   
-       01 WS-FS-SALIDA           PIC X(2).                                  
+       01 WS-FS-SALIDA          PIC X(2).                                  
           88 WS-FSS-OK                      VALUE '00'. 
                                                                         
-      * INDICADOR DE CORTE DEL PROGRAMA *
-       01 WS-PROGRAMA            PIC X(1)   VALUE 'A'.
+      * INDICADOR DE FIN DEL PROGRAMA *
+       01 WS-PROGRAMA           PIC X(1)    VALUE 'A'.
           88 PGM-FIN                        VALUE 'F'.                 
                       
       * INDICADOR DE OPERACION EN CURSO *
-       01 WS-OPERACION           PIC X(1)   VALUE SPACE.
-          88 CURSOR-ABIERTO                 VALUE 'A'.
-          88 CURSOR-LECTURA                 VALUE 'L'.
-          88 CURSOR-CERRADO                 VALUE 'C'.
-          88 SALIDA-ABIERTO                 VALUE 'S'.
-          88 SALIDA-GRABAR                  VALUE 'G'.
-          88 SALIDA-CERRADO                 VALUE 'X'.
+       01 WS-OPERACION          PIC X(1)    VALUE SPACE.
+          88 ABRIENDO-ARCHIVO               VALUE 'O'.
+          88 GRABANDO-ARCHIVO               VALUE 'W'.
+          88 CERRANDO-ARCHIVO               VALUE 'C'.
+          88 ABRIENDO-CURSOR                VALUE 'O'.
+          88 LEYENDO-CURSOR                 VALUE 'R'.
+          88 CERRANDO-CURSOR                VALUE 'C'.
                      
       * INDICADOR DE LINEA A IMPRIMIR *
-       01 WS-IND-LINEA           PIC 9      VALUE 0.
+       01 WS-IND-LINEA          PIC 9       VALUE ZEROS.
           88 IND-TITULO                     VALUE 1.
           88 IND-SUBTITULO-DEPT             VALUE 2.
           88 IND-SUBTITULO-SEXO             VALUE 3.
@@ -74,27 +74,28 @@
                                                                         
       * VALORES ANTERIORES PARA CONTROL DE CORTE *                 
        01 WS-DATO-ANTERIOR.                                             
-          05 WS-DEPT-ANT         PIC X(4)   VALUE SPACES.               
-          05 WS-SEXO-ANT         PIC X      VALUE SPACES.               
+          05 WS-DEPT-ANT        PIC X(4)    VALUE SPACES.               
+          05 WS-SEXO-ANT        PIC X       VALUE SPACES.               
                                                                         
-      * CONTADORES DE CORTE *
-       01 WS-CONTADORES-CORTE.
-          05 WS-CNT-SEXO         PIC 9(4)   VALUE ZEROS.
-          05 WS-CNT-DEPT         PIC 9(4)   VALUE ZEROS.
+      * CONTADORES Y ACUMULADORES *
+       01 WS-CONTADORES-ACUMULADORES.
+          05 WS-CONT-SEXO       PIC 9(5)    VALUE ZEROS.
+          05 WS-ACUM-SEXO       PIC 9(9)V99 VALUE ZEROS.
+          05 WS-CONT-DEPTO      PIC 9(5)    VALUE ZEROS.
+          05 WS-ACUM-DEPTO      PIC 9(9)V99 VALUE ZEROS.
+          05 WS-CONT-TOTAL      PIC 9(5)    VALUE ZEROS.
+          05 WS-ACUM-TOTAL      PIC 9(9)V99 VALUE ZEROS. 
 
       * CONTADORES GLOBALES *
-       01 WS-CONTADORES-TOTAL.
-          05 WS-CNT-LEIDOS       PIC 9(4)   VALUE ZEROS.
-          05 WS-CNT-IMPRESOS     PIC 9(4)   VALUE ZEROS.
-                                                                       
-       77 WS-MASCARA             PIC Z(4)   VALUE ZEROS.                
-                                                                        
+          05 WS-CNT-LEIDOS      PIC 9(4)    VALUE ZEROS.
+          05 WS-CNT-IMPRESOS    PIC 9(4)    VALUE ZEROS.                                                                       
+                                                                  
       * INCLUDE SQLCA Y DCLGEN *                      
-           EXEC SQL INCLUDE SQLCA END-EXEC.                        
-           EXEC SQL INCLUDE DCLGEMP END-EXEC. 
+           EXEC SQL INCLUDE SQLCA    END-EXEC.                        
+           EXEC SQL INCLUDE DCLGEMP  END-EXEC. 
            EXEC SQL INCLUDE DCLGDEPT END-EXEC.                    
                                                                         
-      * DECLARACION DE CURSOR - CLIENTES POR ANIO Y SEXO *
+      * DECLARACION DE CURSOR *
            EXEC SQL
              DECLARE EMPDEPT-CURSOR CURSOR FOR
                SELECT E.EMPNO,
@@ -121,58 +122,45 @@
       ******************************************************************
        DECLARATIVES.
       *----------------------------------------------------------------*
-      * SECCION DE ERROR I/O — ARCHIVO SALIDA                          *
+      *                                                                *
       *----------------------------------------------------------------*
        ERROR-SALIDA SECTION.
            USE AFTER STANDARD ERROR PROCEDURE ON OUTPUT.
        MANEJADOR-ERROR-SALIDA.
-           MOVE 'RPTCLI01' TO WS-ERR-PROGRAMA
-           MOVE WS-OPERACION TO WS-ERR-OPERACION
-           MOVE WS-FS-SALIDA TO WS-ERR-FILE-STATUS
-           SET ERR-ES-BATCH TO TRUE
-           CALL 'PGMERROR' USING WS-ERROR
-           SET PGM-FIN TO TRUE
+           GO TO 2300-I-INVOCAR-RUTINA-ERROR 
            .
        END DECLARATIVES.                                           
                                                                         
-           EXEC SQL WHENEVER SQLERROR CONTINUE END-EXEC               
+           EXEC SQL WHENEVER SQLERROR  
+              GO TO 2300-I-INVOCAR-RUTINA-ERROR 
+           END-EXEC               
            EXEC SQL WHENEVER NOT FOUND CONTINUE END-EXEC.  
-                                                                        
-       MAIN-PROGRAM.                                                    
-                                                                        
-           PERFORM 1000-I-INICIO THRU 1000-F-INICIO                    
+                                                                                    
+       MAIN-PROGRAM.                                                   
+           PERFORM 1000-I-INICIO  THRU 1000-F-INICIO                    
            PERFORM 2000-I-PROCESO THRU 2000-F-PROCESO UNTIL PGM-FIN 
-           PERFORM 3000-I-FINAL THRU 3000-F-FINAL                     
+           PERFORM 3000-I-FINAL   THRU 3000-F-FINAL                     
            .                                                            
-       F-MAIN-PROGRAM. 
-           GOBACK.                                          
+       F-MAIN-PROGRAM. GOBACK.                      
                                                                         
       ******************************************************************
       *                 CUERPO PRINCIPAL DE INICIO                     *
       ******************************************************************
-      * POR MEDIO DE NIVELES 88 + EL USO DE SET PARA ACTIVAR EL VALOR +*
-      * EVALUATE TRUE SE MANEJA EL FLUJO DE EJECUCION                  *
+      * Por medio de los niveles 88 de 01 WS-OPERACION + SET se crea un*
+      * estado general y junto a EVALUATE TRUE se maneja el fujo.      *
       ******************************************************************
                                                                         
        1000-I-INICIO.
+           MOVE FUNCTION 
+                FORMATTED-CURRENT-DATE("%d/%m/%Y") TO WS-RPT-FECHA
 
-           MOVE FUNCTION FORMATTED-CURRENT-DATE("%d/%m/%Y")
-              TO WS-RPT-FECHA
-
-           INITIALIZE WS-CONTADORES-TOTAL
-                      WS-CONTADORES-CORTE
-                      WS-ACUMULADORES-TOTAL
-                      WS-ACUMULADORES-CORTE
-
+           INITIALIZE WS-CONTADORES-ACUMULADORES
                                                                        
-           SET WS-OPEN-SFILE TO TRUE         *> APERTURA ARCHIVO SALIDA 
+           SET ABRIENDO-ARCHIVO TO TRUE       *> APERTURA ARCHIVO SALIDA 
            OPEN OUTPUT SALIDA                                           
                                                                         
-           SET WS-OPEN-CURSOR TO TRUE         *> APERTURA DE CURSOR     
-           EXEC SQL OPEN EMPDEPT-CURSOR END-EXEC                                  
-           EXIT PARAGRAPH.    
-
-
+           SET ABRIENDO-CURSOR TO TRUE         *> APERTURA DE CURSOR     
+           EXEC SQL OPEN EMPDEPT-CURSOR END-EXEC
            .
        1000-F-INICIO. 
            EXIT.                                           
@@ -181,10 +169,9 @@
       *                 CUERPO PRINCIPAL DE PROCESOS                   *
       ******************************************************************
                                                                         
-       2000-I-PROCESO.                                                  
-                                                                        
-           PERFORM 2100-ABRIR-RECURSOS                                  
-           PERFORM 2200-LEER-CURSOR                                     
+       2000-I-PROCESO.                                                 
+                                        
+           PERFORM 2100-I-LEER-CURSOR                                      
                                                                         
       *> -----------------| INICIO PERFORM EXTERIOR |------------------*
                                                                         
@@ -246,28 +233,31 @@
                    SET WS-LINEA-TOTALES TO TRUE     *> IMPRIMIR TOTALES 
                    PERFORM 2300-GRABAR-SALIDA                                 
                                                                         
-           END-PERFORM *> -------| FINAL PERFORM EXTERIOR |--------- <* 
-           EXIT PARAGRAPH.                                              
+           END-PERFORM *> -------| FINAL PERFORM EXTERIOR |--------- <*
+           .
+       2000-F-PROCESO. EXIT.                                              
                                                                                                                  
                                                                         
-       2200-LEER-CURSOR.                                                
+       2100-I-LEER-CURSOR.                                                
                                                                         
-           SET WS-FETCH-CURSOR TO TRUE                                  
+           SET LEYENDO-CURSOR TO TRUE                                  
                                                                         
                EXEC SQL FETCH ITEM
-                   INTO :WT-NROCLI,
-                        :WT-NOMAPE,
-                        :WT-FECNAC,
-                        :WT-SEXO
+                   INTO :WS-EMPNO,
+                        :WS-FIRSTNME,
+                        :WS-LASTNAME,
+                        :WS-WORKDEPT,
+                        :WS-SEX,
+                        :WS-SALARY
                END-EXEC                                                 
+                         
+           ADD 1 TO WS-CNT-LEIDOS
+           .                                    
+       2100-F-LEER-CURSOR.  EXIT.                                             
                                                                         
-           MOVE WT-FECNAC(1:4) TO WS-ANIO-NAC       *> CAPTURA SOLO ANIO
-           ADD 1 TO WS-TOTAL-LEIDOS                                     
-           EXIT PARAGRAPH.                                              
+       2200-I-GRABAR-SALIDA.                                              
                                                                         
-       2300-GRABAR-SALIDA.                                              
-                                                                        
-           SET WS-WRITE-SFILE TO TRUE                                   
+           SET GRABANDO-ARCHIVO TO TRUE                                   
                                                                         
            IF LINAGE-COUNTER = 1                                        
               ADD 1 TO WS-NUM-PAG                          
@@ -311,45 +301,34 @@
                                                                         
            IF WS-FSS-OK                                                 
               SET WS-FETCH-CURSOR TO TRUE                            
-           END-IF                                                       
-           EXIT PARAGRAPH.                                              
+           END-IF
+           .                                                       
+       2200-F-GRABAR-SALIDA.                                             
                                                                         
-       2400-CERRAR-CURSOR.                                              
-                                                                        
-           EXEC SQL WHENEVER SQLERROR CONTINUE END-EXEC.                
-                                                                        
-           IF SQLCODE < 0                                               
-              IF WS-FETCH-CURSOR                                       
-                 SET WS-CLOSE-CURSOR TO TRUE                            
-                 EXEC SQL CLOSE ITEM END-EXEC                           
-              END-IF                                                   
-              DISPLAY WS-ACCION SQLCODE                                
-              MOVE 9999 TO RETURN-CODE                                 
-           ELSE                                                         
-              IF WS-TOTAL-LEIDOS = 0                                   
-                 DISPLAY 'CONSULTA SIN RESULTADOS'                      
-              END-IF                                                   
-              SET WS-PGM-FIN TO TRUE                              
-              SET WS-CLOSE-CURSOR TO TRUE                              
-               EXEC SQL CLOSE ITEM END-EXEC                             
-           END-IF                                                       
-           EXIT PARAGRAPH.                                              
-                                                                        
-       2000-F-PROCESO. 
-           EXIT.                                            
+       2300-I-INVOCAR-RUTINA-ERROR.                                              
+           MOVE 'RPTCLI01'   TO WS-ERR-PROGRAMA
+           MOVE WS-OPERACION TO WS-ERR-OPERACION
+           MOVE WS-FS-SALIDA TO WS-ERR-FILE-STATUS
+           SET ERR-ES-BATCH  TO TRUE
+           CALL 'PGMERROR'   USING WS-ERROR
+           SET PGM-FIN       TO TRUE 
+
+           EVALUATE TRUE 
+              WHEN ABRIENDO-ARCHIVO OR ABRIENDO-CURSOR
+                   GO TO 1000-F-INICIO
+              WHEN GRABANDO-ARCHIVO OR LEYENDO-CURSOR 
+                   GO TO 2000-F-PROCESO 
+           END-EVALUATE                                                             
+           .                                         
+       2300-F-INVOCAR-RUTINA-ERROR.  EXIT. 
                                                                         
       ******************************************************************
       *                    CUERPO PRINCIPAL FINAL                      *
       ******************************************************************
        3000-I-FINAL.                                                    
                                                                         
-           IF WS-TOTAL-LEIDOS > 0 AND SQLCODE = 0 AND WS-FSS-OK         
-              MOVE WS-TOTAL-LEIDOS TO WS-MASCARA                        
-              DISPLAY 'TOTAL DE REGISTROS LEIDOS:   ' WS-MASCARA       
-              MOVE WS-TOTAL-IMPRES TO WS-MASCARA                        
-              DISPLAY 'TOTAL DE REGISTROS IMPRESOS: ' WS-MASCARA       
-           END-IF                                                       
-           .                                                            
+                                                                
+                                                                      
        3000-F-FINAL. 
            EXIT.                                              
       *                                                                 
