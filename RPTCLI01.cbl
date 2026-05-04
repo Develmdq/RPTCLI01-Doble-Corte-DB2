@@ -67,14 +67,13 @@
           88 IND-TITULO                     VALUE 1.
           88 IND-SUBTITULO-DEPT             VALUE 2.
           88 IND-SUBTITULO-SEXO             VALUE 3.
-          88 IND-COLUMNAS                   VALUE 4.
-          88 IND-DETALLE                    VALUE 5.
-          88 IND-SUBTOTAL-SEXO              VALUE 6.
-          88 IND-TOTAL-DEPT                 VALUE 7.                    
+          88 IND-DETALLE                    VALUE 4.
+          88 IND-SUBTOTAL-SEXO              VALUE 5.
+          88 IND-TOTAL-DEPT                 VALUE 6.                    
                                                                         
       * VALORES ANTERIORES PARA CONTROL DE CORTE *                 
        01 WS-DATO-ANTERIOR.                                             
-          05 WS-DEPT-ANT        PIC X(4)    VALUE SPACES.               
+          05 WS-WORKDEPT-ANT    PIC X(3)    VALUE SPACES.               
           05 WS-SEXO-ANT        PIC X       VALUE SPACES.               
                                                                         
       * CONTADORES Y ACUMULADORES *
@@ -88,7 +87,7 @@
 
       * CONTADORES GLOBALES *
           05 WS-CNT-LEIDOS      PIC 9(4)    VALUE ZEROS.
-          05 WS-CNT-IMPRESOS    PIC 9(4)    VALUE ZEROS.                                                                       
+          05 WS-CNT-IMPRESOS    PIC 9(4)    VALUE ZEROS.
                                                                   
       * INCLUDE SQLCA Y DCLGEN *                      
            EXEC SQL INCLUDE SQLCA    END-EXEC.                        
@@ -133,8 +132,7 @@
                                                                         
            EXEC SQL WHENEVER SQLERROR  
               GO TO 2300-I-INVOCAR-RUTINA-ERROR 
-           END-EXEC               
-           EXEC SQL WHENEVER NOT FOUND CONTINUE END-EXEC.  
+           END-EXEC.
                                                                                     
        MAIN-PROGRAM.                                                   
            PERFORM 1000-I-INICIO  THRU 1000-F-INICIO                    
@@ -171,73 +169,48 @@
                                                                         
        2000-I-PROCESO.                                                 
                                         
-           PERFORM 2100-I-LEER-CURSOR                                      
+           PERFORM 2100-I-LEER-CURSOR THRU  2100-F-LEER-CURSOR                                      
                                                                         
-      *> -----------------| INICIO PERFORM EXTERIOR |------------------*
+          *> ---------------| INICIO PERFORM EXTERIOR |---------------<*
+           PERFORM UNTIL PGM-FIN                                       
+              MOVE WS-WORKDEPT TO WS-WORKDEPT-ANT  *> MOVER KEY SUPERIOR
+              INITIALIZE WS-CONT-DEPTO WS-ACUM-DEPTO    
+              SET IND-SUBTITULO-DEPT TO TRUE      *> IMPRIMIR SUBTITULO
+              PERFORM 2200-I-GRABAR-REG THRU 2200-F-GRABAR-REG                                 
                                                                         
-           PERFORM UNTIL WS-PGM-FIN                                     
+             *> -----------| INICIO PERFORM CORTE SUPERIOR |----------<*
+              PERFORM UNTIL WS-WORKDEPT NOT = WS-WORKDEPT-ANT OR PGM-FIN
+                 MOVE WS-SEX TO WS-SEXO-ANT       *> MOVER KEY INFERIOR
+                 INITIALIZE WS-CONT-SEXO WS-ACUM-SEXO                                 
+                 SET IND-SUBTITULO-SEXO TO TRUE
+                 PERFORM 2200-I-GRABAR-REG THRU 2200-F-GRABAR-REG 
+
+                *> --------| INICIO PERFORM CORTE INFERIOR |----------<*
+                 PERFORM UNTIL WS-WORKDEPT NOT = WS-WORKDEPT-ANT
+                               OR WS-SEX NOT = WS-SEXO-ANT OR PGM-FIN
+                    SET IND-DETALLE TO TRUE       *> IMPRIMIR DETALLES 
+                    PERFORM 2200-I-GRABAR-REG THRU 2200-F-GRABAR-REG           
+                    ADD 1 TO WS-CLI-SEX                    
+                    ADD 1 TO WS-CLI-ANIO                      
+                    ADD 1 TO WS-TOTAL-IMPRES        
+                    PERFORM 2300-GRABAR-SALIDA                          
+                    SET WS-FETCH-CURSOR TO TRUE    *> LECTURA SIGUIENTE
+                    PERFORM 2200-LEER-CURSOR                            
+                 END-PERFORM
+                 *> --------| FINAL PERFORM CORTE INFERIOR |--------- <*
+                 
+                 SET WS-LINEA-SUBTOTAL TO TRUE      *> IMPRIMIR SUBTOTAL
+                 PERFORM 2200-I-GRABAR-REG THRU 2200-F-GRABAR-REG       
+              END-PERFORM
+             *> ------------| FINAL PERFORM CORTE SUPERIOR |--------- <* 
                                                                         
-                   MOVE WS-ANIO-NAC TO WS-ANIO-ANT*> MOVER KEY SUPERIOR 
-                                                                        
-                   INITIALIZE WS-CLI-ANIO                                     
-                                                                        
-                   SET WS-LINEA-SUBTITULO TO TRUE  *> IMPRIMIR SUBTITULO
-                   PERFORM 2300-GRABAR-SALIDA                                 
-                                                                        
-      *> --------------| INICIO PERFORM CORTE SUPERIOR |---------------*
-                                                                        
-                   PERFORM UNTIL WS-ANIO-NAC NOT = WS-ANIO-ANT OR
-                      WS-PGM-FIN    
-                                                                        
-                           MOVE WT-SEXO TO WS-SEXO-ANT
-                                                   *> MOVER KEY INFERIOR
-                                                                        
-                           INITIALIZE WS-CLI-SEX                                      
-                                                                        
-                           SET WS-LINEA-SUBTITULO-2 TO TRUE
-                                                  *> IMPRIMIR SUBTITULO 
-                           PERFORM 2300-GRABAR-SALIDA                                 
-                                                                        
-                           SET WS-LINEA-COLUMNAS TO TRUE
-                                                    *> IMPRIMIR COLUMNAS
-                           PERFORM 2300-GRABAR-SALIDA                                 
-                                                                        
-      *> --------------| INICIO PERFORM CORTE INFERIOR |---------------*
-                                                                        
-                           PERFORM UNTIL WS-ANIO-NAC NOT = WS-ANIO-ANT
-                              OR
-                              WT-SEXO NOT = WS-SEXO-ANT OR WS-PGM-FIN  
-                                                                        
-                                   ADD 1 TO WS-CLI-SEX                                     
-                                   ADD 1 TO WS-CLI-ANIO                                    
-                                   ADD 1 TO WS-TOTAL-IMPRES                                
-                                                                        
-                                   SET WS-LINEA-DETALLE TO TRUE
-                                                   *> IMPRIMIR DETALLES 
-                                   PERFORM 2300-GRABAR-SALIDA                               
-                                                                        
-                                   SET WS-FETCH-CURSOR TO TRUE
-                                                   *> LECTURA SIGUIENTE 
-                                   PERFORM 2200-LEER-CURSOR                                 
-                                                                        
-                           END-PERFORM
-                           *> ---| FINAL PERFORM CORTE INFERIOR |--- <* 
-                                                                        
-                           SET WS-LINEA-SUBTOTAL TO TRUE
-                                                    *> IMPRIMIR SUBTOTAL
-                           PERFORM 2300-GRABAR-SALIDA                               
-                                                                        
-                   END-PERFORM
-                         *> -----| FINAL PERFORM CORTE SUPERIOR |--- <* 
-                                                                        
-                   SET WS-LINEA-TOTALES TO TRUE     *> IMPRIMIR TOTALES 
-                   PERFORM 2300-GRABAR-SALIDA                                 
-                                                                        
-           END-PERFORM *> -------| FINAL PERFORM EXTERIOR |--------- <*
+              SET WS-LINEA-TOTALES TO TRUE     *> IMPRIMIR TOTALES 
+              PERFORM 2200-I-GRABAR-REG THRU 2200-F-GRABAR-REG       
+           END-PERFORM 
+          *> -----------------| FINAL PERFORM EXTERIOR |------------- <*
            .
        2000-F-PROCESO. EXIT.                                              
-                                                                                                                 
-                                                                        
+                                                                                                                                                                                
        2100-I-LEER-CURSOR.                                                
                                                                         
            SET LEYENDO-CURSOR TO TRUE                                  
@@ -255,7 +228,7 @@
            .                                    
        2100-F-LEER-CURSOR.  EXIT.                                             
                                                                         
-       2200-I-GRABAR-SALIDA.                                              
+       2200-I-GRABAR-REG.                                              
                                                                         
            SET GRABANDO-ARCHIVO TO TRUE                                   
                                                                         
@@ -303,7 +276,7 @@
               SET WS-FETCH-CURSOR TO TRUE                            
            END-IF
            .                                                       
-       2200-F-GRABAR-SALIDA.                                             
+       2200-F-GRABAR-REG.                                             
                                                                         
        2300-I-INVOCAR-RUTINA-ERROR.                                              
            MOVE 'RPTCLI01'   TO WS-ERR-PROGRAMA
@@ -314,11 +287,12 @@
            SET PGM-FIN       TO TRUE 
 
            EVALUATE TRUE 
-              WHEN ABRIENDO-ARCHIVO OR ABRIENDO-CURSOR
+              WHEN ABRIENDO-ARCHIVO 
                    GO TO 1000-F-INICIO
               WHEN GRABANDO-ARCHIVO OR LEYENDO-CURSOR 
                    GO TO 2000-F-PROCESO 
-           END-EVALUATE                                                             
+           END-EVALUATE 
+           EXEC SQL WHENEVER NOT FOUND CONTINUE END-EXEC                                                            
            .                                         
        2300-F-INVOCAR-RUTINA-ERROR.  EXIT. 
                                                                         
