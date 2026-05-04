@@ -118,11 +118,11 @@
                                                                         
       ******************************************************************
        PROCEDURE DIVISION.                                              
-      ******************************************************************
-       DECLARATIVES.
+      ******************************************************************       
       *----------------------------------------------------------------*
       *                                                                *
       *----------------------------------------------------------------*
+       DECLARATIVES.
        ERROR-SALIDA SECTION.
            USE AFTER STANDARD ERROR PROCEDURE ON OUTPUT.
        MANEJADOR-ERROR-SALIDA.
@@ -144,7 +144,7 @@
       ******************************************************************
       *                 CUERPO PRINCIPAL DE INICIO                     *
       ******************************************************************
-      * Por medio de los niveles 88 de 01 WS-OPERACION + SET se crea un*
+      * Por medio de niveles 88 de 01 WS-OPERACION + SET se crea un    *
       * estado general y junto a EVALUATE TRUE se maneja el fujo.      *
       ******************************************************************
                                                                         
@@ -154,10 +154,10 @@
 
            INITIALIZE WS-CONTADORES-ACUMULADORES
                                                                        
-           SET ABRIENDO-ARCHIVO TO TRUE       *> APERTURA ARCHIVO SALIDA 
+           SET ABRIENDO-ARCHIVO TO TRUE       *> Apertura Archivo Salida 
            OPEN OUTPUT SALIDA                                           
                                                                         
-           SET ABRIENDO-CURSOR TO TRUE         *> APERTURA DE CURSOR     
+           SET ABRIENDO-CURSOR TO TRUE             *> Apertura de Cursor     
            EXEC SQL OPEN EMPDEPT-CURSOR END-EXEC
            .
        1000-F-INICIO. 
@@ -168,19 +168,19 @@
       ******************************************************************
                                                                         
        2000-I-PROCESO.                                                 
-                                        
+           SET LEYENDO-CURSOR TO TRUE                      *> 1ª Lectura                             
            PERFORM 2100-I-LEER-CURSOR THRU  2100-F-LEER-CURSOR                                      
                                                                         
           *> ---------------| INICIO PERFORM EXTERIOR |---------------<*
            PERFORM UNTIL PGM-FIN                                       
-              MOVE WS-WORKDEPT TO WS-WORKDEPT-ANT  *> MOVER KEY SUPERIOR
+              MOVE WS-WORKDEPT TO WS-WORKDEPT-ANT  *> Mover Key superior
               INITIALIZE WS-CONT-DEPTO WS-ACUM-DEPTO    
-              SET IND-SUBTITULO-DEPT TO TRUE      *> IMPRIMIR SUBTITULO
+              SET IND-SUBTITULO-DEPT TO TRUE       *> Imprimir Subtitulo
               PERFORM 2200-I-GRABAR-REG THRU 2200-F-GRABAR-REG                                 
                                                                         
              *> -----------| INICIO PERFORM CORTE SUPERIOR |----------<*
               PERFORM UNTIL WS-WORKDEPT NOT = WS-WORKDEPT-ANT OR PGM-FIN
-                 MOVE WS-SEX TO WS-SEXO-ANT       *> MOVER KEY INFERIOR
+                 MOVE WS-SEX TO WS-SEXO-ANT        *> Mover Key inferior
                  INITIALIZE WS-CONT-SEXO WS-ACUM-SEXO                                 
                  SET IND-SUBTITULO-SEXO TO TRUE
                  PERFORM 2200-I-GRABAR-REG THRU 2200-F-GRABAR-REG 
@@ -188,23 +188,22 @@
                 *> --------| INICIO PERFORM CORTE INFERIOR |----------<*
                  PERFORM UNTIL WS-WORKDEPT NOT = WS-WORKDEPT-ANT
                                OR WS-SEX NOT = WS-SEXO-ANT OR PGM-FIN
-                    SET IND-DETALLE TO TRUE       *> IMPRIMIR DETALLES 
+                    SET IND-DETALLE TO TRUE          *> Imprimir Detalle 
                     PERFORM 2200-I-GRABAR-REG THRU 2200-F-GRABAR-REG           
                     ADD 1 TO WS-CLI-SEX                    
                     ADD 1 TO WS-CLI-ANIO                      
-                    ADD 1 TO WS-TOTAL-IMPRES        
-                    PERFORM 2300-GRABAR-SALIDA                          
-                    SET WS-FETCH-CURSOR TO TRUE    *> LECTURA SIGUIENTE
-                    PERFORM 2200-LEER-CURSOR                            
+                    ADD 1 TO WS-TOTAL-IMPRES 
+                    SET LEYENDO-CURSOR TO TRUE      *> Lectura Siguiente
+                    PERFORM 2100-I-LEER-CURSOR THRU  2100-F-LEER-CURSOR                            
                  END-PERFORM
                  *> --------| FINAL PERFORM CORTE INFERIOR |--------- <*
-                 
-                 SET WS-LINEA-SUBTOTAL TO TRUE      *> IMPRIMIR SUBTOTAL
+
+                 SET WS-LINEA-SUBTOTAL TO TRUE      *> Imprimir Subtotal
                  PERFORM 2200-I-GRABAR-REG THRU 2200-F-GRABAR-REG       
               END-PERFORM
              *> ------------| FINAL PERFORM CORTE SUPERIOR |--------- <* 
                                                                         
-              SET WS-LINEA-TOTALES TO TRUE     *> IMPRIMIR TOTALES 
+              SET WS-CONT-TOTAL TO TRUE                *> Imprimir Total
               PERFORM 2200-I-GRABAR-REG THRU 2200-F-GRABAR-REG       
            END-PERFORM 
           *> -----------------| FINAL PERFORM EXTERIOR |------------- <*
