@@ -1,69 +1,59 @@
-//KC03C61U JOB CLASS=A,MSGCLASS=O,MSGLEVEL=(1,1),NOTIFY=&SYSUID
-//JCLLIB   JCLLIB ORDER=KC02788.ALU9999.PROCLIB
-//*
-//**********************************************************************
-//* JCL PARA COMPILAR, BINDEAR, BORRAR/CREAR ARCHIVO FBA Y EJECUTAR:   *
-//*                 KC03C61.CURSOS.FUENTE(PGMRDC61)                    *
-//* ********************************************************************
-//*
-//*-------------------------------------------------------
-//* STEP1 - COMPILADOR COBOL DB2
-//*-------------------------------------------------------
-//STEP1      EXEC COMPDB2,
-//           ALUMLIB=KC03C61.CURSOS,
-//           GOPGM=PGMRDC61
-//PC.SYSLIB  DD DSN=KC03C61.CURSOS.DCLGEN,DISP=SHR
-//COB.SYSLIB DD DSN=&USERID..COPYLIB,DISP=SHR
-//           DD DSN=&USERID..COPYLIB,DISP=SHR
-//*
-//*-------------------------------------------------------
-//* STEP2 - BIND DB2
-//*-------------------------------------------------------
-//STEP2    EXEC PGM=IKJEFT01,DYNAMNBR=20,COND=(4,LT)
+//RPTCLI01 JOB 1,NOTIFY=&SYSUID,REGION=0M
+//*----------------------------------------------------------*
+//*  PASO 1: PRECOMPILADOR DB2                               *
+//*----------------------------------------------------------*
+//DB2PC   EXEC PGM=DSNHPC,PARM='HOST(COBOL),XREF,SOURCE'
 //STEPLIB  DD DSN=DSND10.SDSNLOAD,DISP=SHR
-//DBRMLIB  DD DSN=&USERID..CURSOS.DBRMLIB,DISP=SHR
+//DBRMLIB  DD DSN=&SYSUID..DBRMLIB(RPTCLI01),DISP=SHR
+//SYSIN    DD DSN=&SYSUID..CBL(RPTCLI01),DISP=SHR
+//SYSCIN   DD DSN=&&DSNHOUT,DISP=(NEW,PASS),
+//            UNIT=SYSDA,SPACE=(800,(500,500))
+//SYSLIB   DD DSN=&SYSUID..SYSLIB,DISP=SHR
+//SYSPRINT DD SYSOUT=*
+//SYSUDUMP DD SYSOUT=*
+//*----------------------------------------------------------*
+//*  PASO 2: COMPILACION COBOL                              *
+//*----------------------------------------------------------*
+//COBOL   EXEC IGYWCL,COND=(4,LT,DB2PC)
+//COBOL.SYSIN   DD DSN=&&DSNHOUT,DISP=(OLD,DELETE)
+//COBOL.SYSLIB  DD DSN=&SYSUID..SYSLIB,DISP=SHR
+//LKED.SYSLMOD  DD DSN=&SYSUID..LOAD(RPTCLI01),DISP=SHR
+//*----------------------------------------------------------*
+//*  PASO 3: BIND                                           *
+//*----------------------------------------------------------*
+//BIND    EXEC PGM=IKJEFT01,COND=(4,LT,COBOL.COBOL)
+//STEPLIB  DD DSN=DSND10.SDSNLOAD,DISP=SHR
+//DBRMLIB  DD DSN=&SYSUID..DBRMLIB,DISP=SHR
+//SYSTSIN  DD *,SYMBOLS=CNVTSYS
+ DSN SYSTEM(DBDG)
+ BIND PLAN(&SYSUID) MEMBER(RPTCLI01) LIB('&SYSUID..DBRMLIB') -
+      ACTION(REPLACE) ISOLATION(CS)
+ END
 //SYSTSPRT DD SYSOUT=*
-//SYSTSIN  DD *
-  DSN SYSTEM(DBDG)
-  RUN  PROGRAM(DSNTIAD) PLAN(DSNTIA13) -
-       LIB('DSND10.DBDG.RUNLIB.LOAD')
-  BIND PLAN(CURSOC61) MEMBER(PGMRDC61) +
-       CURRENTDATA(NO) ACT(REP) ISO(CS) ENCODING(EBCDIC)
-  END
-/*
 //SYSPRINT DD SYSOUT=*
-//SYSUDUMP DD SYSOUT=*
-//*
-//*-------------------------------------------------------
-//* STEP3 - BORRAR ARCHIVO SALIDA
-//*-------------------------------------------------------
-//STEP3    EXEC PGM=IEFBR14
-//DD0      DD   DSN=KC03C61.LISTADO.FINAL1,
-//         DISP=(MOD,DELETE),UNIT=SYSDA,SPACE=(TRK,0)
-//*
-//*-------------------------------------------------------
-//* STEP4 - CREAR ARCHIVO FBA
-//*-------------------------------------------------------
-//STEP4    EXEC PGM=IEFBR14
-//DD1      DD   DSN=KC03C61.LISTADO.FINAL1,UNIT=SYSDA,
-//         DCB=(LRECL=133,BLKSIZE=0,RECFM=FBA),
-//         SPACE=(TRK,(1,1),RLSE),DISP=(,CATLG)
-//*
-//*-------------------------------------------------------
-//* STEP5 - EJECUTAR PROGRAMA COBOL DB2
-//*-------------------------------------------------------
-//STEP5    EXEC PGM=IKJEFT01,DYNAMNBR=20,COND=(4,LT)
-//STEPLIB  DD   DSN=DSND10.SDSNLOAD,DISP=SHR
-//         DD   DSN=KC03C61.CURSOS.PGMLIB,DISP=SHR
-//SYSTSPRT DD   SYSOUT=*
-//DDSALE   DD   DSN=KC03C61.LISTADO.FINAL1,DISP=SHR
-//SYSOUT   DD   SYSOUT=*
-//SYSTSIN  DD   *
-  DSN SYSTEM(DBDG)
-  RUN  PROGRAM(PGMRDC61) PLAN(CURSOC61) +
-       LIB('KC03C61.CURSOS.PGMLIB')
-  END
-/*
+//*----------------------------------------------------------*
+//*  PASO 4: BORRAR SALIDA ANTERIOR                         *
+//*----------------------------------------------------------*
+//DELETE  EXEC PGM=IDCAMS,COND=(4,LT,BIND)
 //SYSPRINT DD SYSOUT=*
-//SYSUDUMP DD SYSOUT=*
-//
+//SYSIN    DD *
+  DELETE &SYSUID..OUTPUT(RPTCLI01)
+  SET MAXCC=0
+/*
+//*----------------------------------------------------------*
+//*  PASO 5: EJECUCION                                      *
+//*----------------------------------------------------------*
+//RUN     EXEC PGM=IKJEFT01,COND=(4,LT,DELETE)
+//STEPLIB  DD DSN=DSND10.SDSNLOAD,DISP=SHR
+//         DD DSN=&SYSUID..LOAD,DISP=SHR
+//DDSALE   DD DSN=&SYSUID..OUTPUT(RPTCLI01),DISP=SHR,
+//            RECFM=FBA,LRECL=132,BLKSIZE=0
+//SYSTSIN  DD *,SYMBOLS=CNVTSYS
+ DSN SYSTEM(DBDG)
+ RUN PROGRAM(RPTCLI01) PLAN(&SYSUID) LIB('&SYSUID..LOAD')
+ END
+//SYSTSPRT DD SYSOUT=*
+//SYSPRINT DD SYSOUT=*
+//SYSUDUMP DD DUMMY
+//CEEDUMP  DD DUMMY
+/*
