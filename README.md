@@ -22,4 +22,4 @@ y dónde.
 NOTA SOBRE EL USO DE GO TO: 
 Su uso esta **segmentado exclusivamente** para manejar el flujo de ejecucion dentro del **estado de error**.    
 No interfiere en el flujo de la logica de negocio, el cual respeta la programacion estructurada y la ejecucion TOP-DOWN.   
-*---------------------------------------------------------------------------------------------------------------------------------------------------------------*           
+*--------------------------------------------------------------------------------------------------------------------------------------------------------------*           
