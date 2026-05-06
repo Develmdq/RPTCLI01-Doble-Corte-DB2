@@ -22,7 +22,7 @@
       *---------------------*                                           
        FILE-CONTROL.                                                    
              SELECT SALIDA ASSIGN DDSALE                                
-             FILE STATUS IS WS-FS-SALIDA.                                
+             FILE STATUS IS WS-FS-SALIDA.                               
                                                                         
       ******************************************************************
        DATA DIVISION.                                                   
@@ -33,17 +33,17 @@
        FD SALIDA
            BLOCK CONTAINS 0 RECORDS
            RECORDING MODE IS F
-           LINAGE IS 60 LINES                                     
-                                                                        
+           LINAGE IS 60 LINES                               
+                                                                       
        01 REG-SALIDA            PIC X(132).                           
                                                                         
       *------------------------*                                        
-       WORKING-STORAGE SECTION.                                         
+       WORKING-STORAGE SECTION.                                       
       *------------------------*                                        
-       77 FILLER                PIC X(26)   VALUE '* INICIO WS *'.       
+       77 FILLER                PIC X(26)   VALUE '* INICIO WS *'.     
                                                                         
       * CONTROL FILES STATUS SALIDA *                                   
-       01 WS-FS-SALIDA          PIC X(2).                                  
+       01 WS-FS-SALIDA          PIC X(2).                               
           88 WS-FSS-OK                      VALUE '00'. 
                                                                         
       * INDICADOR DE FIN DEL PROGRAMA *
@@ -94,7 +94,7 @@
            EXEC SQL INCLUDE SQLCA    END-EXEC.                        
            EXEC SQL INCLUDE DCLGEMP  END-EXEC. 
            EXEC SQL INCLUDE DCLGDEPT END-EXEC.                    
-                                                                        
+                                                                      
       * DECLARACION DE CURSOR *
            EXEC SQL
              DECLARE EMPDEPT-CURSOR CURSOR FOR
@@ -126,7 +126,7 @@
       * de ejecucion dentro del estado de error. No interfiere en el   *
       * flujo de la logica de negocio, el cual respeta la              *
       * programacion estructurada y la ejecucion TOP-DOWN.             *
-      *----------------------------------------------------------------*      
+      *----------------------------------------------------------------*
       *----------------------------------------------------------------*
       * MANEJO DE ERRORES                                              *
       * - DECLARATIVES: Captura errores de E/S en archivo de salida    *
@@ -149,7 +149,7 @@
            EXEC SQL WHENEVER SQLERROR  
               GO TO 2300-I-INVOCAR-RUTINA-ERROR 
            END-EXEC.
-                                                                                    
+                                                                    
        MAIN-PROGRAM.                                                   
            PERFORM 1000-I-INICIO  THRU 1000-F-INICIO                    
            PERFORM 2000-I-PROCESO THRU 2000-F-PROCESO UNTIL PGM-FIN 
@@ -164,12 +164,12 @@
       ******************************************************************
        1000-I-INICIO.
            MOVE FUNCTION 
-                FORMATTED-CURRENT-DATE("%d/%m/%Y") TO RPT-TIT-FECHA           
+                FORMATTED-CURRENT-DATE("%d/%m/%Y") TO RPT-TIT-FECHA 
                                                                        
            SET ABRIENDO-ARCHIVO TO TRUE       *> Apertura Archivo Salida 
            OPEN OUTPUT SALIDA                                           
                                                                         
-           SET ABRIENDO-CURSOR TO TRUE             *> Apertura de Cursor     
+           SET ABRIENDO-CURSOR TO TRUE             *> Apertura de Cursor
            EXEC SQL OPEN EMPDEPT-CURSOR END-EXEC
            .
        1000-F-INICIO. 
@@ -181,18 +181,18 @@
            PERFORM 2100-I-LEER-CURSOR THRU  2100-F-LEER-CURSOR 
            INITIALIZE WS-CONTADORES-ACUMULADORES
            SET IND-TITULO TO TRUE                     *> Grabar titulo
-           PERFORM 2200-I-PROC-SALIDA THRU 2200-F-PROC-SALIDA            
+           PERFORM 2200-I-PROC-SALIDA THRU 2200-F-PROC-SALIDA           
           *> ---------------| INICIO PERFORM EXTERIOR |---------------<*
            PERFORM UNTIL PGM-FIN                                       
               MOVE WS-WORKDEPT TO WS-WORKDEPT-ANT  *> Mover Key superior
               INITIALIZE WS-CONT-DEPTO WS-ACUM-DEPTO    
               SET IND-SUBTITULO-DEPT TO TRUE     *> Grabar Subtitulo Dep
-              PERFORM 2200-I-PROC-SALIDA THRU 2200-F-PROC-SALIDA         
+              PERFORM 2200-I-PROC-SALIDA THRU 2200-F-PROC-SALIDA        
              *> -----------| INICIO PERFORM CORTE SUPERIOR |----------<*
               PERFORM UNTIL WS-WORKDEPT NOT = WS-WORKDEPT-ANT OR PGM-FIN
                  MOVE WS-SEX TO WS-SEX-ANT         *> Mover Key inferior
                  INITIALIZE WS-CONT-SEXO WS-ACUM-SEXO      
-                 SET IND-SUBTITULO-SEXO TO TRUE *> Grabar Subtitulo Sexo 
+                 SET IND-SUBTITULO-SEXO TO TRUE *> Grabar Subtitulo Sexo
                  PERFORM 2200-I-PROC-SALIDA THRU 2200-F-PROC-SALIDA 
                 *> --------| INICIO PERFORM CORTE INFERIOR |----------<*
                  PERFORM UNTIL WS-WORKDEPT NOT = WS-WORKDEPT-ANT
@@ -209,19 +209,19 @@
                  SET IND-SUBTOTAL-SEXO TO TRUE
                  PERFORM 2200-I-PROC-SALIDA THRU 2200-F-PROC-SALIDA  
               END-PERFORM
-             *> ------------| FINAL PERFORM CORTE SUPERIOR |--------- <* 
+             *> ------------| FINAL PERFORM CORTE SUPERIOR |--------- <*
               ADD WS-CONT-DEPTO TO WS-CONT-TOTAL
               ADD WS-ACUM-DEPTO TO WS-ACUM-TOTAL
               SET IND-SUBTOTAL-DEPT TO TRUE *> Imprimir Subtotal Dept
-              PERFORM 2200-I-PROC-SALIDA THRU 2200-F-PROC-SALIDA           
+              PERFORM 2200-I-PROC-SALIDA THRU 2200-F-PROC-SALIDA       
            END-PERFORM 
           *> -----------------| FINAL PERFORM EXTERIOR |------------- <*
            SET IND-TOTAL-GRAL TO TRUE          *> Imprimir Gran Total
            PERFORM 2200-I-PROC-SALIDA THRU 2200-F-PROC-SALIDA  
            .
-       2000-F-PROCESO. EXIT.                                              
-                                                                                                                                                                                
-       2100-I-LEER-CURSOR.                                                
+       2000-F-PROCESO. EXIT.   
+
+       2100-I-LEER-CURSOR.                
                                                                         
            SET LEYENDO-CURSOR TO TRUE                              
                                                                         
