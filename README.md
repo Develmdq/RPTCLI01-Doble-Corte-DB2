@@ -1,7 +1,7 @@
 🚧 Proyecto en desarrollo como parte de mi especialización en arquitectura COBOL".
 
 Descripción:
-Programa Batch COBOL/DB2 desarrollado para entorno Mainframe (z/OS). El módulo ejecuta una consulta relacional mediante un JOIN de tablas y procesa los datos aplicando lógica de Doble Corte de Control, generando un reporte que muestra totalizadores y promedios.
+Programa **Batch COBOL/DB2** desarrollado para entorno Mainframe (z/OS). El módulo ejecuta una consulta relacional mediante un JOIN de tablas y procesa los datos aplicando lógica de **Doble Corte de Control**, generando un reporte que muestra totalizadores y promedios.
 
 Algunos puntos de diseño en el código:
 
@@ -18,8 +18,8 @@ Ante cualquier error: cierra lo que se pueda cerrar, emite un mensaje detallado
 por DISPLAY y termina con RC 9999 para que el operador sepa exactamente qué pasó 
 y dónde.
 
-*----------------------------------------------------------------------------------------------------------------------*   
+*--------------------------------------------------------------------------------------------------------------------------------------------------------------------------*   
 NOTA SOBRE EL USO DE GO TO: 
-Su uso esta **segmentado exclusivamente** para manejar el flujo de ejecucion dentro del **estado de error**. 
+Su uso esta **segmentado exclusivamente** para manejar el flujo de ejecucion dentro del **estado de error**.    
 No interfiere en el flujo de la logica de negocio, el cual respeta la programacion estructurada y la ejecucion TOP-DOWN.   
-*----------------------------------------------------------------------------------------------------------------------*           
+*----------------------------------------------------------------------------------------------------------------------------------------------------------------------------*           
