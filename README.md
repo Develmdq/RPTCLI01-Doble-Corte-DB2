@@ -13,9 +13,9 @@ Algunos puntos de diseño en el código:
 * Captura de fecha x medio de Funció Intrínseca;
 * Manejo de errores centralizado en un subprograma (rutina) reutilizable mediante
 código defensivo para evitar ABENDs — el programa intercepta errores en cada 
-punto crítico (ON SIZE ERROR, DECLARATIVES, WHENEVER).
+punto crítico (ON SIZE ERROR, DECLARATIVES, WHENEVER, variable indicadora de DB2, IS NUMERIC, ETC).
 Ante cualquier error: cierra lo que se pueda cerrar, emite un mensaje detallado 
-por DISPLAY y termina con RC 9999 para que el operador sepa exactamente qué pasó 
+por DISPLAY y termina con RC = 9999 para que el operador sepa exactamente qué pasó 
 y dónde.
 
 *--------------------------------------------------------------------------------------------------------------------------------------------------------------*   

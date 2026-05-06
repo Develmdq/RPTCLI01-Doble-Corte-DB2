@@ -225,7 +225,7 @@
                                                                         
            SET LEYENDO-CURSOR TO TRUE                              
                                                                         
-               EXEC SQL FETCH ITEM
+               EXEC SQL FETCH EMPDEPT-CURSOR
                    INTO :WS-EMPNO,
                         :WS-FIRSTNME,
                         :WS-LASTNAME,
@@ -235,24 +235,13 @@
                END-EXEC 
 
            IF SQLCODE = +100 SET PGM-FIN TO TRUE END-IF
-   
-    
-
+      
+      * Control tipo de dato 
            EVALUATE TRUE
-              WHEN WS-SALARY NOT NUMERIC SET ERR-TIPO-DATO     TO TRUE
-              WHEN WS-CONT-SEXO = ZEROS  SET ERR-DIVISION-CERO TO TRUE
-              
-           END-EVALUATE
-           IF ERR-TIPO-DATO OR ERR-DIVISION-CERO
-               PERFORM 2300-I-INVOCAR-RUTINA-ERROR
-                  THRU 2300-F-INVOCAR-RUTINA-ERROR
-           END-IF
-
-           IF IND-SALARY < 0
-             SET ERR-TIPO-DATO TO TRUE
-             PERFORM 2300-I-INVOCAR-RUTINA-ERROR
-                 THRU 2300-F-INVOCAR-RUTINA-ERROR
-           END-IF                                                                    
+              WHEN WS-SALARY NOT NUMERIC OR IND-SALARY < 0
+              SET ERR-TIPO-DATO  TO TRUE
+              GO TO 2300-I-INVOCAR-RUTINA-ERROR 
+           END-EVALUATE                                           
                         
            ADD 1 TO WS-CNT-LEIDOS 
            .                                    
@@ -333,7 +322,6 @@
                         WS-ACUM-SEXO / WS-CONT-SEXO
            MOVE WS-SEX       TO RPT-SSX-SEXO
            MOVE WS-CONT-SEXO TO RPT-SSX-CANTIDAD
-           MOVE WS-SEX       TO RPT-SSX-PROMEDIO
            WRITE REG-SALIDA FROM RPT-SUBTOTAL-SEXO
            WRITE REG-SALIDA FROM RPT-BORDE-IGUAL           
            .
@@ -343,8 +331,8 @@
            WRITE REG-SALIDA FROM RPT-BORDE-IGUAL
            COMPUTE RPT-TDP-PROMEDIO ROUNDED = 
                    WS-ACUM-DEPTO / WS-CONT-DEPTO
-           MOVE WS-DEPTNO     TO RPT-TDP-DEPTNO
-           MOVE WS-CONT-DEPTO TO RPT-TDP-CANTIDAD
+           MOVE WS-WORKDEPT-ANT TO RPT-TDP-DEPTNO
+           MOVE WS-CONT-DEPTO   TO RPT-TDP-CANTIDAD
            WRITE REG-SALIDA FROM RPT-LINEA-BLANCA
            WRITE REG-SALIDA FROM RPT-TOTAL-DEPT
            WRITE REG-SALIDA FROM RPT-BORDE-ASTERISCO           
@@ -369,7 +357,9 @@
            CALL 'PGMERROR'   USING WS-ERROR
            SET PGM-FIN       TO TRUE 
 
-           EVALUATE TRUE 
+           EVALUATE TRUE
+              WHEN ERR-TIPO-DATO
+                   GO TO 2100-F-LEER-CURSOR
               WHEN ABRIENDO-ARCHIVO OR ABRIENDO-CURSOR
                    GO TO 1000-F-INICIO
               WHEN GRABANDO-ARCHIVO OR LEYENDO-CURSOR 
@@ -384,15 +374,22 @@
       *                    CUERPO PRINCIPAL FINAL                      *
       ******************************************************************
        3000-I-FINAL.
-      *    EVALUATE TRUE 
-      *       WHEN 
-           
-           IF LEYENDO-CURSOR OR ABRIENDO-CURSOR
-              EXEC SQL CLOSE EMPDEPT-CURSOR END-EXEC
-           END-IF
-           IF GRABANDO-ARCHIVO OR ABRIENDO-ARCHIVO
-              CLOSE SALIDA
+           IF RETURN-CODE = 9999
+              EVALUATE TRUE
+                 WHEN ABRIENDO-ARCHIVO
+                   CONTINUE
+                 WHEN ABRIENDO-CURSOR
+                   CLOSE SALIDA
+                 WHEN LEYENDO-CURSOR OR GRABANDO-ARCHIVO
+                   CLOSE SALIDA
+                   EXEC SQL CLOSE EMPDEPT-CURSOR END-EXEC
+                 WHEN CERRANDO-ARCHIVO OR CERRANDO-CURSOR
+                   CONTINUE
+              END-EVALUATE
+           ELSE
+             CLOSE SALIDA
+             EXEC SQL CLOSE EMPDEPT-CURSOR END-EXEC
            END-IF
            .
-       3000-F-FINAL. EXIT.                                              
+       3000-F-FINAL. EXIT.                                           
       *                                                                 
