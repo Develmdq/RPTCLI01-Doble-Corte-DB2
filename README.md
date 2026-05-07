@@ -1,4 +1,4 @@
-🚧 Proyecto en desarrollo como parte de mi especialización en arquitectura COBOL".
+🔂 Proyecto como parte de mi especialización en **COBOL**.
 
 Descripción:
 Programa **Batch COBOL/DB2** desarrollado para entorno Mainframe (z/OS). El módulo ejecuta una consulta relacional mediante un JOIN de tablas y procesa los datos aplicando lógica de **Doble Corte de Control**, generando un reporte que muestra totalizadores y promedios.
@@ -15,7 +15,7 @@ Algunos puntos de diseño en el código:
 código defensivo para evitar ABENDs — el programa intercepta errores en cada 
 punto crítico (ON SIZE ERROR, DECLARATIVES, WHENEVER, variable indicadora de DB2, IS NUMERIC, ETC).
 Ante cualquier error: cierra lo que se pueda cerrar, emite un mensaje detallado 
-por DISPLAY y termina con RC = 9999 para que el operador sepa exactamente qué pasó 
+por DISPLAY y termina con RC 9999 para que el operador sepa exactamente qué pasó 
 y dónde.
 
 *----------------------------------------------------------------------------------------------------------------------------------*   
