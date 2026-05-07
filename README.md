@@ -10,7 +10,7 @@ Algunos puntos de diseño en el código:
 * Uso de CURSOR SQL;
 * Paginado automático x medio de LINAGE COUNTER;
 * Doble corte de control x medio de PERFORM-INLINE;
-* Captura de fecha x medio de Funció Intrínseca;
+* Captura de fecha x medio de Función Intrínseca;
 * Manejo de errores centralizado en un subprograma (rutina) reutilizable mediante
 código defensivo para evitar ABENDs — el programa intercepta errores en cada 
 punto crítico (ON SIZE ERROR, DECLARATIVES, WHENEVER, variable indicadora de DB2, IS NUMERIC, ETC).
