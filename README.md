@@ -39,8 +39,13 @@ NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS de CPER
 <br>
 ** CAPTURA DE SALIDA interfaz web de z/OSMF (z/OS Management Facility) **
    
-<br><img width="1595" height="745" alt="Sin título (2)" src="https://github.com/user-attachments/assets/cc01cc14-13fc-4367-8e35-deb959d144b2" />      
+<img width="1595" height="745" alt="Sin título (2)" src="https://github.com/user-attachments/assets/cc01cc14-13fc-4367-8e35-deb959d144b2" />      
 
-** CAPTURA DEL SPOOL POR FORZADO DE ERROR **
-<br><img width="1597" height="865" alt="Sin título (1)" src="https://github.com/user-attachments/assets/8ed9b198-92f7-4076-a129-fe352416ec26" />
+<br>
+** CAPTURA DEL SPOOL POR FORZADO DE ERROR **   
+<img width="1597" height="865" alt="Sin título (1)" src="https://github.com/user-attachments/assets/8ed9b198-92f7-4076-a129-fe352416ec26" />
+
+<br>
+
+<img width="1597" height="845" alt="Sin título (2)" src="https://github.com/user-attachments/assets/56391948-5719-441d-aac8-537d8a51b0df" />
 
