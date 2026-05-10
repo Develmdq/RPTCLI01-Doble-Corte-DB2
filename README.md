@@ -21,10 +21,10 @@ y dónde.
 
 *----------------------------------------------------------------------------------------------------------------------------------*   
 NOTA SOBRE EL USO DE GO TO:
-Su uso esta **segmentado exclusivamente** para manejar el flujo de ejecucion dentro del **estado de error**.
-No interfiere en el flujo de la logica de negocio, el cual respeta la programacion estructurada y la ejecucion TOP-DOWN.   
+Su uso esta **segmentado exclusivamente** para manejar el flujo de ejecución dentro del **estado de error**.
+No interfiere en el flujo de la lógica de negocio, el cual respeta la programación estructurada y la ejecución TOP-DOWN.   
 *----------------------------------------------------------------------------------------------------------------------------------*   
-NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS de CPERROR, eliminando el MOVE intermedio y estandarizando el manejo de errores en todos los programas que adopten esta arquitectura.   
+NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS (variable de la COPY de rutina de error), eliminando el MOVE intermedio y estandarizando el manejo de errores en todos los programas que adopten esta arquitectura.   
 *----------------------------------------------------------------------------------------------------------------------------------*   
 <br>
 ** CAPTURA DE SALIDA EMULADOR WX3270 **
