@@ -41,5 +41,9 @@ NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS de CPER
    
 <img width="1595" height="745" alt="Sin título (2)" src="https://github.com/user-attachments/assets/cc01cc14-13fc-4367-8e35-deb959d144b2" />   
    
+<br>   
 
+** CAPTURA DEL SPOOL POR FORZADO DE ERROR **
+
+   
 
