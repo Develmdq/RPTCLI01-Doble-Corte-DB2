@@ -26,5 +26,10 @@ No interfiere en el flujo de la logica de negocio, el cual respeta la programaci
 *----------------------------------------------------------------------------------------------------------------------------------*   
 NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS de CPERROR, eliminando el MOVE intermedio y estandarizando el manejo de errores en todos los programas que adopten esta arquitectura.   
 *----------------------------------------------------------------------------------------------------------------------------------*   
-<img width="1597" height="859" alt="Sin título" src="https://github.com/user-attachments/assets/d11e3686-0a4d-4495-acd1-7fbd8b673a77" />
+** CAPTURA DE SALIDA EMULADOR WX3270 **
+<img width="1597" height="859" alt="Sin título" src="https://github.com/user-attachments/assets/d11e3686-0a4d-4495-acd1-7fbd8b673a77" />   
+
+** CAPTURA DE SALIDA VSCODE + ZOWE **   
+<img width="1597" height="861" alt="Sin título (1)" src="https://github.com/user-attachments/assets/89a2b0f1-021f-47fa-bbf0-9cc16910cd19" />
+
 
