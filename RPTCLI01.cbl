@@ -33,7 +33,7 @@
        FD SALIDA
            BLOCK CONTAINS 0 RECORDS
            RECORDING MODE IS F
-           LINAGE IS 60 LINES
+           LINAGE IS 60 LINES.
 
        01 REG-SALIDA            PIC X(132).
 
@@ -60,11 +60,10 @@
           88 IND-TITULO                     VALUE 1.
           88 IND-SUBTITULO-DEPT             VALUE 2.
           88 IND-SUBTITULO-SEXO             VALUE 3.
-          88 IND-COLUMNAS                   VALUE 4.
-          88 IND-DETALLE                    VALUE 5.
-          88 IND-SUBTOTAL-SEXO              VALUE 6.
-          88 IND-SUBTOTAL-DEPT              VALUE 7.
-          88 IND-TOTAL-GRAL                 VALUE 8.
+          88 IND-DETALLE                    VALUE 4.
+          88 IND-SUBTOTAL-SEXO              VALUE 5.
+          88 IND-SUBTOTAL-DEPT              VALUE 6.
+          88 IND-TOTAL-GRAL                 VALUE 7.
 
       * VALORES ANTERIORES PARA CONTROL DE CORTE *
        01 WS-DATO-ANTERIOR.
@@ -83,8 +82,25 @@
           05 WS-CNT-GRABADOS    PIC 9(4)    VALUE ZEROS.
           05 WS-NUM-PAGINA      PIC 9(4)    VALUE ZEROS.
 
+      * FECHA Y HORA *
+       01 WS-TIEMPO-SISTEMA.
+      *- Estructura para la Fecha
+          05 WS-FECHA-COMPLETA PIC X(08).
+          05 FILLER            REDEFINES WS-FECHA-COMPLETA.
+             10 WS-AAAA        PIC X(04).
+             10 WS-MM          PIC X(02).
+             10 WS-DD          PIC X(02).
+
+      * CONTROL VALOR NULL EN CAMPO SALARY
        01 WS-INDICADORES-NULL.
-          05 IND-SALARY         PIC S9(4)   USAGE COMP-5.
+          05 IND-SALARY         PIC S9(4)   USAGE COMP.
+
+      * CENTRADO DE TEXTO *
+       01 WS-CENTRADO.
+          05 WS-TEXTO-CENTRAR    PIC X(36)  VALUE SPACES.
+          05 WS-LONG-TEXTO       PIC 9(2)   VALUE ZEROS.
+          05 WS-PADDING          PIC 9(2)   VALUE ZEROS.
+          05 WS-TEXTO-CENTRADO   PIC X(78)  VALUE SPACES.
 
       * INCLUDE SQLCA Y DCLGEN *
            EXEC SQL INCLUDE SQLCA    END-EXEC.
@@ -102,7 +118,7 @@
                       E.SEX,
                       E.SALARY
                FROM IBMUSER.EMP E,
-                      IBMUSER.DEPT D
+                    IBMUSER.DEPT D
                WHERE E.WORKDEPT = D.DEPTNO
                ORDER BY E.WORKDEPT, E.SEX
            END-EXEC.
@@ -159,15 +175,16 @@
       * estado general y junto a EVALUATE TRUE se maneja el fujo.      *
       ******************************************************************
        1000-I-INICIO.
-           MOVE FUNCTION
-                FORMATTED-CURRENT-DATE("%d/%m/%Y") TO RPT-TIT-FECHA
+           MOVE FUNCTION CURRENT-DATE(1:8)  TO WS-FECHA-COMPLETA
 
            SET ABRIENDO-ARCHIVO TO TRUE       *> Apertura Archivo Salida
            OPEN OUTPUT SALIDA
 
            SET ABRIENDO-CURSOR TO TRUE             *> Apertura de Cursor
            EXEC SQL OPEN EMPDEPT-CURSOR END-EXEC
+           INITIALIZE WS-CONTADORES-ACUMULADORES
            PERFORM 2100-I-LEER-CURSOR THRU  2100-F-LEER-CURSOR
+
            .
        1000-F-INICIO.
            EXIT.
@@ -175,7 +192,7 @@
       *                 CUERPO PRINCIPAL DE PROCESOS                   *
       ******************************************************************
        2000-I-PROCESO.
-           INITIALIZE WS-CONTADORES-ACUMULADORES
+
            SET IND-TITULO TO TRUE                     *> Grabar titulo
            PERFORM 2200-I-PROC-SALIDA THRU 2200-F-PROC-SALIDA
           *> ---------------| INICIO PERFORM EXTERIOR |---------------<*
@@ -226,20 +243,27 @@
                         :WS-FIRSTNME,
                         :WS-LASTNAME,
                         :WS-WORKDEPT,
+                        :WS-DEPTNAME,
                         :WS-SEX,
                         :WS-SALARY :IND-SALARY
                END-EXEC
 
+           IF SQLCODE = +100 AND WS-CNT-LEIDOS = 0
+              DISPLAY 'QUERY SIN DATOS EN EL 1º FETCH'
+              MOVE 9999  TO RETURN-CODE
+              SET PGM-FIN TO TRUE
+           ELSE
+              ADD 1 TO WS-CNT-LEIDOS
+           END-IF
+
            IF SQLCODE = +100 SET PGM-FIN TO TRUE END-IF
 
-      * Control tipo de dato
+      * Control NULL en campor SALARY
            EVALUATE TRUE
               WHEN WS-SALARY NOT NUMERIC OR IND-SALARY < 0
               SET ERR-TIPO-DATO  TO TRUE
               GO TO 2300-INVOCAR-RUTINA-ERROR
            END-EVALUATE
-
-           ADD 1 TO WS-CNT-LEIDOS
            .
        2100-F-LEER-CURSOR.  EXIT.
 
@@ -270,27 +294,43 @@
 
            ADD 1 TO WS-CNT-GRABADOS
            .
-       2200-F-PROC-SALIDA.
+       2200-F-PROC-SALIDA. EXIT.
 
        2210-I-GRABAR-TITULO.
            ADD 1 TO WS-NUM-PAGINA
+           STRING WS-DD                        DELIMITED BY SIZE
+                  '/'                          DELIMITED BY SIZE
+                  WS-MM                        DELIMITED BY SIZE
+                  '/'                          DELIMITED BY SIZE
+                  WS-AAAA                      DELIMITED BY SIZE
+             INTO RPT-TIT-FECHA
+           END-STRING
            MOVE WS-NUM-PAGINA TO RPT-TIT-PAGINA
-           WRITE REG-SALIDA FROM RPT-BORDE-ASTERISCO
+           WRITE REG-SALIDA FROM RPT-BORDE-GUION
+           WRITE REG-SALIDA FROM RPT-LINEA-BLANCA
            WRITE REG-SALIDA FROM RPT-TITULO
-           WRITE REG-SALIDA FROM RPT-BORDE-ASTERISCO
+           WRITE REG-SALIDA FROM RPT-LINEA-BLANCA
            .
        2210-F-GRABAR-TITULO.  EXIT.
 
        2220-I-GRABAR-SUBTITULO-DEPT.
-           MOVE  WS-WORKDEPT      TO RPT-CDP-DEPTNO
-           MOVE  WS-DEPTNAME-TEXT TO RPT-CDP-DEPTNAME
+           STRING 'DEPARTAMENTO: '          DELIMITED BY SIZE
+                  WS-WORKDEPT-ANT           DELIMITED BY SIZE
+                  ' - '                     DELIMITED BY SIZE
+                  WS-DEPTNAME-TEXT(1:WS-DEPTNAME-LEN) DELIMITED BY SIZE
+                  INTO WS-TEXTO-CENTRAR
+           END-STRING
+           PERFORM 2400-I-CENTRAR-TEXTO THRU 2400-F-CENTRAR-TEXTO
+           WRITE REG-SALIDA FROM RPT-BARRA-INCLINADA
+           MOVE WS-TEXTO-CENTRADO TO RPT-CDP-TEXTO
+           WRITE REG-SALIDA FROM RPT-LINEA-BLANCA
            WRITE REG-SALIDA FROM RPT-CAB-DEPT
            WRITE REG-SALIDA FROM RPT-BORDE-GUION
            .
        2220-F-GRABAR-SUBTITULO-DEPT.  EXIT.
 
        2230-I-GRABAR-SUBTITULO-SEXO.
-           EVALUATE WS-SEX
+           EVALUATE WS-SEX-ANT
               WHEN 'F'
                 MOVE 'FEMENINO ' TO RPT-CSX-DESC-SEXO
               WHEN 'M'
@@ -300,15 +340,17 @@
            END-EVALUATE
            WRITE REG-SALIDA FROM RPT-CAB-SEXO
            WRITE REG-SALIDA FROM RPT-BORDE-GUION
+           WRITE REG-SALIDA FROM RPT-COLUMNAS
+           WRITE REG-SALIDA FROM RPT-BORDE-GUION
            .
        2230-F-GRABAR-SUBTITULO-SEXO.  EXIT.
 
        2240-I-GRABAR-DETALLE.
            MOVE WS-EMPNO         TO RPT-DET-EMPNO
-           MOVE WS-FIRSTNME-TEXT TO RPT-DET-NOMBRE
-           MOVE WS-LASTNAME-TEXT TO RPT-DET-APELLIDO
+           MOVE WS-FIRSTNME-TEXT(1:WS-FIRSTNME-LEN) TO RPT-DET-NOMBRE
+           MOVE WS-LASTNAME-TEXT(1:WS-LASTNAME-LEN) TO RPT-DET-APELLIDO
            MOVE WS-SALARY        TO RPT-DET-SALARIO
-           WRITE REG-SALIDA FROM RPT-DETALLE
+           WRITE REG-SALIDA    FROM RPT-DETALLE
            .
        2240-F-GRABAR-DETALLE.  EXIT.
 
@@ -316,7 +358,7 @@
            WRITE REG-SALIDA FROM RPT-BORDE-IGUAL
            COMPUTE RPT-SSX-PROMEDIO ROUNDED =
                         WS-ACUM-SEXO / WS-CONT-SEXO
-           MOVE WS-SEX       TO RPT-SSX-SEXO
+           MOVE WS-SEX-ANT   TO RPT-SSX-SEXO
            MOVE WS-CONT-SEXO TO RPT-SSX-CANTIDAD
            WRITE REG-SALIDA FROM RPT-SUBTOTAL-SEXO
            WRITE REG-SALIDA FROM RPT-BORDE-IGUAL
@@ -324,14 +366,13 @@
        2250-F-GRABAR-SUBTOTAL-SEXO.  EXIT.
 
        2260-I-GRABAR-SUBTOTAL-DEPT.
-           WRITE REG-SALIDA FROM RPT-BORDE-IGUAL
            COMPUTE RPT-TDP-PROMEDIO ROUNDED =
                    WS-ACUM-DEPTO / WS-CONT-DEPTO
            MOVE WS-WORKDEPT-ANT TO RPT-TDP-DEPTNO
            MOVE WS-CONT-DEPTO   TO RPT-TDP-CANTIDAD
            WRITE REG-SALIDA FROM RPT-LINEA-BLANCA
            WRITE REG-SALIDA FROM RPT-TOTAL-DEPT
-           WRITE REG-SALIDA FROM RPT-BORDE-ASTERISCO
+           WRITE REG-SALIDA FROM RPT-LINEA-BLANCA
            .
        2260-F-GRABAR-SUBTOTAL-DEPT.  EXIT.
 
@@ -339,9 +380,11 @@
            COMPUTE RPT-TGR-PROMEDIO ROUNDED =
                    WS-ACUM-TOTAL / WS-CONT-TOTAL
            MOVE WS-CONT-TOTAL TO RPT-TGR-CANTIDAD
+           WRITE REG-SALIDA FROM RPT-BORDE-ASTERISCO
            WRITE REG-SALIDA FROM RPT-LINEA-BLANCA
            WRITE REG-SALIDA FROM RPT-TOTAL-GRAL
            WRITE REG-SALIDA FROM RPT-LINEA-BLANCA
+           WRITE REG-SALIDA FROM RPT-BORDE-ASTERISCO
            .
        2270-F-GRABAR-TOTAL.  EXIT.
 
@@ -364,6 +407,24 @@
                    GO TO 3000-F-FINAL
            END-EVALUATE
            .
+
+      *----------------------------------------------------------------*
+      * 2900-CENTRAR-TEXTO                                             *
+      * Centra un texto dentro de un campo de 78 caracteres.           *
+      * 1. TRIM elimina espacios finales del texto                     *
+      * 2. LENGTH calcula la longitud real del texto                   *
+      * 3. PADDING = (78 - longitud) / 2 = espacios a la izquierda     *
+      * 4. Mueve el texto a la posicion calculada dentro del campo     *
+      *----------------------------------------------------------------*
+       2400-I-CENTRAR-TEXTO.
+           INITIALIZE WS-TEXTO-CENTRADO
+           COMPUTE WS-LONG-TEXTO =
+                   FUNCTION LENGTH(FUNCTION TRIM(WS-TEXTO-CENTRAR))
+           COMPUTE WS-PADDING = (78 - WS-LONG-TEXTO) / 2
+           MOVE WS-TEXTO-CENTRAR(1:WS-LONG-TEXTO) TO
+                WS-TEXTO-CENTRADO(WS-PADDING:WS-LONG-TEXTO)
+           .
+       2400-F-CENTRAR-TEXTO. EXIT.
 
       ******************************************************************
       *                    CUERPO PRINCIPAL FINAL                      *
