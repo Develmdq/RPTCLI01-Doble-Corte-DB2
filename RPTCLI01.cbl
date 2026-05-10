@@ -35,7 +35,7 @@
            RECORDING MODE IS F
            LINAGE IS 60 LINES.
 
-       01 REG-SALIDA            PIC X(132).
+       01 REG-SALIDA            PIC X(72).
 
       *------------------------*
        WORKING-STORAGE SECTION.
@@ -100,7 +100,7 @@
           05 WS-TEXTO-CENTRAR    PIC X(36)  VALUE SPACES.
           05 WS-LONG-TEXTO       PIC 9(2)   VALUE ZEROS.
           05 WS-PADDING          PIC 9(2)   VALUE ZEROS.
-          05 WS-TEXTO-CENTRADO   PIC X(78)  VALUE SPACES.
+          05 WS-TEXTO-CENTRADO   PIC X(70)  VALUE SPACES.
 
       * INCLUDE SQLCA Y DCLGEN *
            EXEC SQL INCLUDE SQLCA    END-EXEC.
@@ -410,17 +410,17 @@
 
       *----------------------------------------------------------------*
       * 2900-CENTRAR-TEXTO                                             *
-      * Centra un texto dentro de un campo de 78 caracteres.           *
+      * Centra un texto dentro de un campo de 70 caracteres.           *
       * 1. TRIM elimina espacios finales del texto                     *
       * 2. LENGTH calcula la longitud real del texto                   *
-      * 3. PADDING = (78 - longitud) / 2 = espacios a la izquierda     *
+      * 3. PADDING = (70 - longitud) / 2 = espacios a la izquierda     *
       * 4. Mueve el texto a la posicion calculada dentro del campo     *
       *----------------------------------------------------------------*
        2400-I-CENTRAR-TEXTO.
            INITIALIZE WS-TEXTO-CENTRADO
            COMPUTE WS-LONG-TEXTO =
                    FUNCTION LENGTH(FUNCTION TRIM(WS-TEXTO-CENTRAR))
-           COMPUTE WS-PADDING = (78 - WS-LONG-TEXTO) / 2
+           COMPUTE WS-PADDING = (70 - WS-LONG-TEXTO) / 2
            MOVE WS-TEXTO-CENTRAR(1:WS-LONG-TEXTO) TO
                 WS-TEXTO-CENTRADO(WS-PADDING:WS-LONG-TEXTO)
            .
