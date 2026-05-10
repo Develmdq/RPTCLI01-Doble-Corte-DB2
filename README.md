@@ -19,10 +19,10 @@ Ante cualquier error: cierra lo que se pueda cerrar, emite un mensaje detallado
 por DISPLAY y termina con RC 9999 para que el operador sepa exactamente qué pasó
 y dónde.
 
-*----------------------------------------------------------------------------------------------------------------------------------*
+*----------------------------------------------------------------------------------------------------------------------------------*   
 NOTA SOBRE EL USO DE GO TO:
 Su uso esta **segmentado exclusivamente** para manejar el flujo de ejecucion dentro del **estado de error**.
 No interfiere en el flujo de la logica de negocio, el cual respeta la programacion estructurada y la ejecucion TOP-DOWN.
-*----------------------------------------------------------------------------------------------------------------------------------*
+*----------------------------------------------------------------------------------------------------------------------------------*   
 NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS de CPERROR, eliminando el MOVE intermedio y estandarizando el manejo de errores en todos los programas que adopten esta arquitectura.
-*----------------------------------------------------------------------------------------------------------------------------------*
+*----------------------------------------------------------------------------------------------------------------------------------*   
