@@ -26,6 +26,63 @@ No interfiere en el flujo de la lógica de negocio, el cual respeta la programac
 *----------------------------------------------------------------------------------------------------------------------------------*   
 NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS (variable de la COPY de rutina de error), eliminando el MOVE intermedio y estandarizando el manejo de errores en todos los programas que adopten esta arquitectura.   
 *----------------------------------------------------------------------------------------------------------------------------------*   
+
+graph TD
+    %% Definición de Estilos
+    classDef inicio_fin fill:#f9f,stroke:#333,stroke-width:2px;
+    classDef proceso fill:#fff,stroke:#333,stroke-width:1px;
+    classDef error fill:#f66,stroke:#333,stroke-width:2px;
+    classDef db2 fill:#69f,stroke:#333,stroke-width:1px;
+
+    Start((Inicio)) --> Init[1000-INICIO]
+    
+    subgraph "Inicialización"
+        Init --> OpenFile[Abrir Archivo SALIDA]
+        OpenFile --> OpenCursor[EXEC SQL OPEN Cursor]
+        OpenCursor --> FirstRead[2100-LEER-CURSOR]
+    end
+
+    FirstRead --> Loop{¿PGM-FIN?}
+    
+    subgraph "Corte de Control (2000-PROCESO)"
+        Loop -- No --> Title[Grabar Títulos]
+        Title --> DeptLoop{Mismo Depto?}
+        DeptLoop -- Sí --> SexLoop{Mismo Sexo?}
+        SexLoop -- Sí --> Detail[Grabar Detalle]
+        Detail --> NextRead[2100-LEER-CURSOR]
+        NextRead --> SexLoop
+        
+        SexLoop -- No --> SubSex[Grabar Subtotal Sexo]
+        SubSex --> DeptLoop
+        
+        DeptLoop -- No --> SubDept[Grabar Subtotal Depto]
+        SubDept --> Loop
+    end
+
+    Loop -- Sí --> Final[3000-FINAL]
+    
+    subgraph "Cierre Ordenado"
+        Final --> CloseAll[Cerrar SALIDA y Cursor]
+        CloseAll --> Stop((GOBACK))
+    end
+
+    %% Flujo de Errores
+    OpenFile -. Error .-> ErrRoutine
+    OpenCursor -. Error .-> ErrRoutine
+    NextRead -. Error .-> ErrRoutine
+    Detail -. Error .-> ErrRoutine
+
+    subgraph "Manejo de Excepciones"
+        ErrRoutine[2300-INVOCAR-RUTINA-ERROR] --> CallErr[CALL PGMERROR]
+        CallErr --> SetFin[SET PGM-FIN TO TRUE]
+        SetFin --> Final
+    end
+
+    %% Asignación de estilos
+    class Start,Stop inicio_fin;
+    class ErrRoutine,CallErr error;
+    class OpenCursor,NextRead,FirstRead db2;
+   
 <br>
 ** CAPTURA DE SALIDA EMULADOR WX3270 **
    
