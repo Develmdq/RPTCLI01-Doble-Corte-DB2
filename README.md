@@ -26,13 +26,14 @@ No interfiere en el flujo de la lógica de negocio, el cual respeta la programac
 *----------------------------------------------------------------------------------------------------------------------------------*   
 NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS (variable de la COPY de rutina de error), eliminando el MOVE intermedio y estandarizando el manejo de errores en todos los programas que adopten esta arquitectura.   
 *----------------------------------------------------------------------------------------------------------------------------------*   
+<div align="center" style="width: 60%; margin: auto;">
 ```mermaid
 graph TD
-    %% Definición de Estilos
-    classDef inicio_fin fill:#f9f,stroke:#333,stroke-width:2px;
-    classDef proceso fill:#fff,stroke:#333,stroke-width:1px;
-    classDef error fill:#f66,stroke:#333,stroke-width:2px;
-    classDef db2 fill:#69f,stroke:#333,stroke-width:1px;
+   %% Configuración de Colores Profesionales
+    classDef inicio_fin fill:#333,stroke:#000,color:#fff,stroke-width:2px;
+    classDef proceso fill:#f4f4f4,stroke:#666,color:#000;
+    classDef db2 fill:#d1e9ff,stroke:#005fb8,color:#000;
+    classDef error fill:#ffebee,stroke:#c62828,color:#c62828
 
     Start((Inicio)) --> Init[1000-INICIO]
     
