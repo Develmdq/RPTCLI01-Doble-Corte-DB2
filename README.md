@@ -27,6 +27,7 @@ No interfiere en el flujo de la lógica de negocio, el cual respeta la programac
 NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS (variable de la COPY de rutina de error), eliminando el MOVE intermedio y estandarizando el manejo de errores en todos los programas que adopten esta arquitectura.   
 *----------------------------------------------------------------------------------------------------------------------------------*   
 
+```mermaid
 graph TD
     %% Definición de Estilos
     classDef inicio_fin fill:#f9f,stroke:#333,stroke-width:2px;
@@ -82,7 +83,7 @@ graph TD
     class Start,Stop inicio_fin;
     class ErrRoutine,CallErr error;
     class OpenCursor,NextRead,FirstRead db2;
-   
+```   
 <br>
 ** CAPTURA DE SALIDA EMULADOR WX3270 **
    
