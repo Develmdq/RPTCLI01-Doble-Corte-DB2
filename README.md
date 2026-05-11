@@ -26,7 +26,7 @@ No interfiere en el flujo de la lógica de negocio, el cual respeta la programac
 *----------------------------------------------------------------------------------------------------------------------------------*   
 NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS (variable de la COPY de rutina de error), eliminando el MOVE intermedio y estandarizando el manejo de errores en todos los programas que adopten esta arquitectura.   
 *----------------------------------------------------------------------------------------------------------------------------------*   
-<div align="center" style="width: 60%; margin: auto;">
+
 ```mermaid
 graph TD
    %% Configuración de Colores Profesionales
