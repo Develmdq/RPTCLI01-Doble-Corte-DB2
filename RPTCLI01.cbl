@@ -83,13 +83,10 @@
           05 WS-NUM-PAGINA      PIC 9(4)    VALUE ZEROS.
 
       * FECHA Y HORA *
-       01 WS-TIEMPO-SISTEMA.
-      *- Estructura para la Fecha
-          05 WS-FECHA-COMPLETA PIC X(08).
-          05 FILLER            REDEFINES WS-FECHA-COMPLETA.
-             10 WS-AAAA        PIC X(04).
-             10 WS-MM          PIC X(02).
-             10 WS-DD          PIC X(02).
+       01 WS-FECHA-HORA.
+          05 WS-AAAA           PIC X(04).
+          05 WS-MM             PIC X(02).
+          05 WS-DD             PIC X(02).
 
       * CONTROL VALOR NULL EN CAMPO SALARY
        01 WS-INDICADORES-NULL.
@@ -175,7 +172,7 @@
       * estado general y junto a EVALUATE TRUE se maneja el fujo.      *
       ******************************************************************
        1000-I-INICIO.
-           MOVE FUNCTION CURRENT-DATE(1:8)  TO WS-FECHA-COMPLETA
+           MOVE FUNCTION CURRENT-DATE(1:8)  TO WS-FECHA-HORA
 
            SET ABRIENDO-ARCHIVO TO TRUE       *> Apertura Archivo Salida
            OPEN OUTPUT SALIDA
