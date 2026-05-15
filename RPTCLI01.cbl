@@ -3,9 +3,25 @@
        PROGRAM-ID. RPTCLI01.
 
       ******************************************************************
-      *       PGM DE CORTE DE CONTROL DOBLE + DB2 + IMPRESION          *
+      *       REPORTE DOBLE CORTE DE CONTROL - CLIENTES                *
       ******************************************************************
-      * AUTOR: MARCET EDUARDO                        FECHA  20/01/2026 *
+      * AUTOR : MARCET EDUARDO                      FECHA: 2026        *
+      ******************************************************************
+      * FUNCION:                                                       *
+      *   EJECUTA CONSULTA RELACIONAL MEDIANTE JOIN DE TABLAS DB2.     *
+      *   PROCESA LOS DATOS APLICANDO DOBLE CORTE DE CONTROL.          *
+      *   GENERA REPORTE CON TOTALIZADORES Y PROMEDIOS.                *
+      ******************************************************************
+      * NOTA SOBRE GO TO:                                              *
+      *   USO SEGMENTADO EXCLUSIVAMENTE PARA MANEJO DE FLUJO DE        *
+      *   ERROR. NO INTERFIERE EN LA LOGICA DE NEGOCIO NI EN LA        *
+      *   EJECUCION TOP-DOWN.                                          *
+      ******************************************************************
+      * NOTA SOBRE FILE STATUS:                                        *
+      *   DECLARADO DIRECTAMENTE SOBRE WS-ERR-FILE-STATUS DE LA COPY   *
+      *   DE PGMERROR, ELIMINANDO EL MOVE INTERMEDIO Y                 *
+      *   ESTANDARIZANDO EL MANEJO DE ERRORES EN TODOS LOS             *
+      *   PROGRAMAS QUE ADOPTEN ESTA ARQUITECTURA.                     *
       ******************************************************************
 
       ******************************************************************
