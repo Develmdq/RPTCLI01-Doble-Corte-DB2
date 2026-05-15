@@ -21,11 +21,69 @@ y dónde.
 
 *----------------------------------------------------------------------------------------------------------------------------------*   
 NOTA SOBRE EL USO DE GO TO:
-Su uso esta **segmentado exclusivamente** para manejar el flujo de ejecucion dentro del **estado de error**.
-No interfiere en el flujo de la logica de negocio, el cual respeta la programacion estructurada y la ejecucion TOP-DOWN.   
+Su uso esta **segmentado exclusivamente** para manejar el flujo de ejecución dentro del **estado de error**.
+No interfiere en el flujo de la lógica de negocio, el cual respeta la programación estructurada y la ejecución TOP-DOWN.   
 *----------------------------------------------------------------------------------------------------------------------------------*   
-NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS de CPERROR, eliminando el MOVE intermedio y estandarizando el manejo de errores en todos los programas que adopten esta arquitectura.   
+NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS (variable de la COPY de rutina de error), eliminando el MOVE intermedio y estandarizando el manejo de errores en todos los programas que adopten esta arquitectura.   
 *----------------------------------------------------------------------------------------------------------------------------------*   
+
+```mermaid
+graph TD
+   %% Configuración de Colores Profesionales
+    classDef inicio_fin fill:#333,stroke:#000,color:#fff,stroke-width:2px;
+    classDef proceso fill:#f4f4f4,stroke:#666,color:#000;
+    classDef db2 fill:#d1e9ff,stroke:#005fb8,color:#000;
+    classDef error fill:#ffebee,stroke:#c62828,color:#c62828
+
+    Start((Inicio)) --> Init[1000-INICIO]
+    
+    subgraph "Inicialización"
+        Init --> OpenFile[Abrir Archivo SALIDA]
+        OpenFile --> OpenCursor[EXEC SQL OPEN Cursor]
+        OpenCursor --> FirstRead[2100-LEER-CURSOR]
+    end
+
+    FirstRead --> Loop{¿PGM-FIN?}
+    
+    subgraph "Corte de Control (2000-PROCESO)"
+        Loop -- No --> Title[Grabar Títulos]
+        Title --> DeptLoop{Mismo Depto?}
+        DeptLoop -- Sí --> SexLoop{Mismo Sexo?}
+        SexLoop -- Sí --> Detail[Grabar Detalle]
+        Detail --> NextRead[2100-LEER-CURSOR]
+        NextRead --> SexLoop
+        
+        SexLoop -- No --> SubSex[Grabar Subtotal Sexo]
+        SubSex --> DeptLoop
+        
+        DeptLoop -- No --> SubDept[Grabar Subtotal Depto]
+        SubDept --> Loop
+    end
+
+    Loop -- Sí --> Final[3000-FINAL]
+    
+    subgraph "Cierre Ordenado"
+        Final --> CloseAll[Cerrar SALIDA y Cursor]
+        CloseAll --> Stop((GOBACK))
+    end
+
+    %% Flujo de Errores
+    OpenFile -. Error .-> ErrRoutine
+    OpenCursor -. Error .-> ErrRoutine
+    NextRead -. Error .-> ErrRoutine
+    Detail -. Error .-> ErrRoutine
+
+    subgraph "Manejo de Excepciones"
+        ErrRoutine[2300-INVOCAR-RUTINA-ERROR] --> CallErr[CALL PGMERROR]
+        CallErr --> SetFin[SET PGM-FIN TO TRUE]
+        SetFin --> Final
+    end
+
+    %% Asignación de estilos
+    class Start,Stop inicio_fin;
+    class ErrRoutine,CallErr error;
+    class OpenCursor,NextRead,FirstRead db2;
+```   
 <br>
 ** CAPTURA DE SALIDA EMULADOR WX3270 **
    
@@ -39,7 +97,13 @@ NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS de CPER
 <br>
 ** CAPTURA DE SALIDA interfaz web de z/OSMF (z/OS Management Facility) **
    
-<img width="1595" height="745" alt="Sin título (2)" src="https://github.com/user-attachments/assets/cc01cc14-13fc-4367-8e35-deb959d144b2" />   
-   
+<img width="1595" height="745" alt="Sin título (2)" src="https://github.com/user-attachments/assets/cc01cc14-13fc-4367-8e35-deb959d144b2" />      
 
+<br>
+** CAPTURA DEL SPOOL POR FORZADO DE ERROR **   
+<img width="1597" height="865" alt="Sin título (1)" src="https://github.com/user-attachments/assets/8ed9b198-92f7-4076-a129-fe352416ec26" />
+
+<br>
+
+<img width="1597" height="845" alt="Sin título (2)" src="https://github.com/user-attachments/assets/56391948-5719-441d-aac8-537d8a51b0df" />
 
