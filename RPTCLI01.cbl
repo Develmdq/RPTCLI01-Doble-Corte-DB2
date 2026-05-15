@@ -12,11 +12,6 @@
       *   PROCESA LOS DATOS APLICANDO DOBLE CORTE DE CONTROL.          *
       *   GENERA REPORTE CON TOTALIZADORES Y PROMEDIOS.                *
       ******************************************************************
-      * NOTA SOBRE GO TO:                                              *
-      *   USO SEGMENTADO EXCLUSIVAMENTE PARA MANEJO DE FLUJO DE        *
-      *   ERROR. NO INTERFIERE EN LA LOGICA DE NEGOCIO NI EN LA        *
-      *   EJECUCION TOP-DOWN.                                          *
-      ******************************************************************
       * NOTA SOBRE FILE STATUS:                                        *
       *   DECLARADO DIRECTAMENTE SOBRE WS-ERR-FILE-STATUS DE LA COPY   *
       *   DE PGMERROR, ELIMINANDO EL MOVE INTERMEDIO Y                 *
