@@ -18,14 +18,18 @@ punto crítico (ON SIZE ERROR, DECLARATIVES, WHENEVER, variable indicadora de DB
 Ante cualquier error: cierra lo que se pueda cerrar, emite un mensaje detallado
 por DISPLAY y termina con RC 9999 para que el operador sepa exactamente qué pasó
 y dónde.
+* Integración con **DSNTIAR** — ante errores DB2, el programa pasa el SQLCA
+completo a PGMERROR, que internamente invoca la rutina IBM DSNTIAR para
+formatear el mensaje de error en texto legible por el operador en el spool,
+eliminando la necesidad de interpretar códigos numéricos.
 
-*----------------------------------------------------------------------------------------------------------------------------------*   
+*----------------------------------------------------------------------------------------------------------------------------------*
 NOTA SOBRE EL USO DE GO TO:
 Su uso esta **segmentado exclusivamente** para manejar el flujo de ejecución dentro del **estado de error**.
-No interfiere en el flujo de la lógica de negocio, el cual respeta la programación estructurada y la ejecución TOP-DOWN.   
-*----------------------------------------------------------------------------------------------------------------------------------*   
-NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS (variable de la COPY de rutina de error), eliminando el MOVE intermedio y estandarizando el manejo de errores en todos los programas que adopten esta arquitectura.   
-*----------------------------------------------------------------------------------------------------------------------------------*   
+No interfiere en el flujo de la lógica de negocio, el cual respeta la programación estructurada y la ejecución TOP-DOWN.
+*----------------------------------------------------------------------------------------------------------------------------------*
+NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS (variable de la COPY de rutina de error), eliminando el MOVE intermedio y estandarizando el manejo de errores en todos los programas que adopten esta arquitectura.
+*----------------------------------------------------------------------------------------------------------------------------------*
 
 ```mermaid
 graph TD
@@ -36,7 +40,7 @@ graph TD
     classDef error fill:#ffebee,stroke:#c62828,color:#c62828
 
     Start((Inicio)) --> Init[1000-INICIO]
-    
+
     subgraph "Inicialización"
         Init --> OpenFile[Abrir Archivo SALIDA]
         OpenFile --> OpenCursor[EXEC SQL OPEN Cursor]
@@ -44,7 +48,7 @@ graph TD
     end
 
     FirstRead --> Loop{¿PGM-FIN?}
-    
+
     subgraph "Corte de Control (2000-PROCESO)"
         Loop -- No --> Title[Grabar Títulos]
         Title --> DeptLoop{Mismo Depto?}
@@ -52,16 +56,16 @@ graph TD
         SexLoop -- Sí --> Detail[Grabar Detalle]
         Detail --> NextRead[2100-LEER-CURSOR]
         NextRead --> SexLoop
-        
+
         SexLoop -- No --> SubSex[Grabar Subtotal Sexo]
         SubSex --> DeptLoop
-        
+
         DeptLoop -- No --> SubDept[Grabar Subtotal Depto]
         SubDept --> Loop
     end
 
     Loop -- Sí --> Final[3000-FINAL]
-    
+
     subgraph "Cierre Ordenado"
         Final --> CloseAll[Cerrar SALIDA y Cursor]
         CloseAll --> Stop((GOBACK))
@@ -83,24 +87,24 @@ graph TD
     class Start,Stop inicio_fin;
     class ErrRoutine,CallErr error;
     class OpenCursor,NextRead,FirstRead db2;
-```   
+```
 <br>
 ** CAPTURA DE SALIDA EMULADOR WX3270 **
-   
-<img width="1597" height="859" alt="Sin título" src="https://github.com/user-attachments/assets/d11e3686-0a4d-4495-acd1-7fbd8b673a77" />   
+
+<img width="1597" height="859" alt="Sin título" src="https://github.com/user-attachments/assets/d11e3686-0a4d-4495-acd1-7fbd8b673a77" />
 
 <br>
 ** CAPTURA DE SALIDA VSCODE + ZOWE **
-   
-<img width="1597" height="861" alt="Sin título (1)" src="https://github.com/user-attachments/assets/89a2b0f1-021f-47fa-bbf0-9cc16910cd19" />   
+
+<img width="1597" height="861" alt="Sin título (1)" src="https://github.com/user-attachments/assets/89a2b0f1-021f-47fa-bbf0-9cc16910cd19" />
 
 <br>
 ** CAPTURA DE SALIDA interfaz web de z/OSMF (z/OS Management Facility) **
-   
-<img width="1595" height="745" alt="Sin título (2)" src="https://github.com/user-attachments/assets/cc01cc14-13fc-4367-8e35-deb959d144b2" />      
+
+<img width="1595" height="745" alt="Sin título (2)" src="https://github.com/user-attachments/assets/cc01cc14-13fc-4367-8e35-deb959d144b2" />
 
 <br>
-** CAPTURA DEL SPOOL POR FORZADO DE ERROR **   
+** CAPTURA DEL SPOOL POR FORZADO DE ERROR **
 <img width="1597" height="865" alt="Sin título (1)" src="https://github.com/user-attachments/assets/8ed9b198-92f7-4076-a129-fe352416ec26" />
 
 <br>
