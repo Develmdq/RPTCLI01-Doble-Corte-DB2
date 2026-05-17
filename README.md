@@ -19,7 +19,7 @@ Ante cualquier error: cierra lo que se pueda cerrar, emite un mensaje detallado
 por DISPLAY y termina con RC 9999 para que el operador sepa exactamente qué pasó
 y dónde.
 * Integración con **DSNTIAR** — ante errores DB2, el programa pasa el SQLCA
-completo a PGMERROR, que internamente invoca la rutina IBM DSNTIAR para
+completo a la rutina (RUTERRBA), que internamente invoca la rutina IBM DSNTIAR para
 formatear el mensaje de error en texto legible por el operador en el spool,
 eliminando la necesidad de interpretar códigos numéricos.
 
