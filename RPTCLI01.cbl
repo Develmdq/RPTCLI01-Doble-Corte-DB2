@@ -14,7 +14,7 @@
       ******************************************************************
       * NOTA SOBRE FILE STATUS:                                        *
       *   DECLARADO DIRECTAMENTE SOBRE WS-ERR-FILE-STATUS DE LA COPY   *
-      *   DE PGMERROR, ELIMINANDO EL MOVE INTERMEDIO Y                 *
+      *   CPERROR, ELIMINANDO EL MOVE INTERMEDIO Y                     *
       *   ESTANDARIZANDO EL MANEJO DE ERRORES EN TODOS LOS             *
       *   PROGRAMAS QUE ADOPTEN ESTA ARQUITECTURA.                     *
       ******************************************************************
@@ -153,7 +153,7 @@
       * - WHENEVER SQLERROR: Captura errores SQL                       *
       * En ambos casos se deriva a 2300-INVOCAR-RUTINA-ERROR que:      *
       *   1. Carga WS-ERROR con el contexto del error                  *
-      *   2. Llama a PGMERROR via CALL                                 *
+      *   2. Llama a RUTERRBA via CALL                                 *
       *   3. Activa PGM-FIN para encauzar el flujo al cierre           *
       * WS-OPERACION refleja el estado en curso al momento del error   *
       * garantizando un cierre ordenado en 3000-FINAL                  *
@@ -400,7 +400,7 @@
            MOVE 'RPTCLI01'   TO WS-ERR-PROGRAMA
            MOVE SQLCA        TO WS-ERR-SQLCA
            MOVE 9999         TO RETURN-CODE
-           CALL 'PGMERROR'   USING WS-ERROR
+           CALL 'RUTERRBA'   USING WS-ERROR
            SET PGM-FIN       TO TRUE
 
            EVALUATE TRUE
@@ -414,7 +414,6 @@
                    GO TO 3000-F-FINAL
            END-EVALUATE
            .
-
       *----------------------------------------------------------------*
       * 2900-CENTRAR-TEXTO                                             *
       * Centra un texto dentro de un campo de 70 caracteres.           *
