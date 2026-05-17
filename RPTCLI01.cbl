@@ -400,7 +400,6 @@
            MOVE 'RPTCLI01'   TO WS-ERR-PROGRAMA
            MOVE SQLCA        TO WS-ERR-SQLCA
            MOVE 9999         TO RETURN-CODE
-           SET ERR-ES-BATCH  TO TRUE
            CALL 'PGMERROR'   USING WS-ERROR
            SET PGM-FIN       TO TRUE
 
