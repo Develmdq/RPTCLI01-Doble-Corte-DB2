@@ -31,54 +31,8 @@ No interfiere en el flujo de la lógica de negocio, el cual respeta la programac
 NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS (variable de la COPY de rutina de error), eliminando el MOVE intermedio y estandarizando el manejo de errores en todos los programas que adopten esta arquitectura.   
 *----------------------------------------------------------------------------------------------------------------------------------*
 
-```mermaid
+<img width="2041" height="4757" alt="mermaid-diagram-2026-05-18-180241 (1)" src="https://github.com/user-attachments/assets/b6b57bfd-1d7f-4e3e-b0d0-ee85be009778" />
 
-graph TD
-   %% Configuración de Colores Profesionales
-    classDef inicio_fin fill:#333,stroke:#000,color:#fff,stroke-width:2px;
-    classDef proceso fill:#f4f4f4,stroke:#666,color:#000;
-    classDef db2 fill:#d1e9ff,stroke:#005fb8,color:#000;
-    classDef error fill:#ffebee,stroke:#c62828,color:#c62828
-    Start((Inicio)) --> Init[1000-INICIO]
-    subgraph "Inicialización"
-        Init --> OpenFile[Abrir Archivo SALIDA]
-        OpenFile --> OpenCursor[EXEC SQL OPEN Cursor]
-        OpenCursor --> FirstRead[2100-LEER-CURSOR]
-    end
-    FirstRead --> Loop{¿PGM-FIN?}
-    subgraph "Corte de Control (2000-PROCESO)"
-        Loop -- No --> Title[Grabar Títulos]
-        Title --> DeptLoop{Mismo Depto?}
-        DeptLoop -- Sí --> SexLoop{Mismo Sexo?}
-        SexLoop -- Sí --> Detail[Grabar Detalle]
-        Detail --> NextRead[2100-LEER-CURSOR]
-        NextRead --> SexLoop
-        SexLoop -- No --> SubSex[Grabar Subtotal Sexo]
-        SubSex --> DeptLoop
-        DeptLoop -- No --> SubDept[Grabar Subtotal Depto]
-        SubDept --> Loop
-    end
-    Loop -- Sí --> Final[3000-FINAL]
-    subgraph "Cierre Ordenado"
-        Final --> CloseAll[Cerrar SALIDA y Cursor]
-        CloseAll --> Stop((GOBACK))
-    end
-    %% Flujo de Errores
-    OpenFile -. Error .-> ErrRoutine
-    OpenCursor -. Error .-> ErrRoutine
-    NextRead -. Error .-> ErrRoutine
-    Detail -. Error .-> ErrRoutine
-    subgraph "Manejo de Excepciones"
-        ErrRoutine[2300-INVOCAR-RUTINA-ERROR] --> CallErr[CALL PGMERROR]
-        CallErr --> SetFin[SET PGM-FIN TO TRUE]
-        SetFin --> Final
-    end
-    %% Asignación de estilos
-    class Start,Stop inicio_fin;
-    class ErrRoutine,CallErr error;
-    class OpenCursor,NextRead,FirstRead db2;
-
-```
 
 **CAPTURA DE SALIDA: REPORTE FINAL GENERADO EN ARCHIVO FÍSICO**   
 
