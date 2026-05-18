@@ -90,7 +90,7 @@ graph LR
 ```
 
 <br>
-
+**CAPTURA DE SALIDA: REPORTE FINAL GENERADO EN ARCHIVO FÍSICO**   
 <table>
   <tr>
     <td align="center"><b>EMULADOR WX3270</b></td>
@@ -110,11 +110,10 @@ graph LR
   <tr>
     <td align="center"><b>EMULADOR WX3270</b></td>
     <td align="center"><b>VSCODE + ZOWE</b></td>
-    <td align="center"><b>INTERFAZ WEB Z/OSMF</b></td>
   </tr>
   <tr>
-    <img width="1319" height="819" alt="err2 (1)" src="https://github.com/user-attachments/assets/ba9932b1-f525-4a89-b37e-2132876441c4" />   
-    <img width="1329" height="821" alt="err1 (1)" src="https://github.com/user-attachments/assets/27cc499a-fdbb-4da8-8238-133724293f2a" />
+    <td><img width="1319" height="819" alt="err2 (1)" src="https://github.com/user-attachments/assets/ba9932b1-f525-4a89-b37e-2132876441c4" /></td>   
+    <td><img width="1329" height="821" alt="err1 (1)" src="https://github.com/user-attachments/assets/27cc499a-fdbb-4da8-8238-133724293f2a" /></td>
   </tr>
 </table>
 
