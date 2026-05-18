@@ -104,6 +104,21 @@ graph TD
 <img width="1595" height="745" alt="Sin título (2)" src="https://github.com/user-attachments/assets/cc01cc14-13fc-4367-8e35-deb959d144b2" />
 
 <br>
+
+<table>
+  <tr>
+    <td align="center"><b>EMULADOR WX3270</b></td>
+    <td align="center"><b>VSCODE + ZOWE</b></td>
+    <td align="center"><b>INTERFAZ WEB Z/OSMF</b></td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/d11e3686-0a4d-4495-acd1-7fbd8b673a77" width="100%" alt="wx3270" /></td>
+    <td><img src="https://github.com/user-attachments/assets/89a2b0f1-021f-47fa-bbf0-9cc16910cd19" width="100%" alt="VS Code + Zowe" /></td>
+    <td><img src="https://github.com/user-attachments/assets/cc01cc14-13fc-4367-8e35-deb959d144b2" width="100%" alt="z/OSMF" /></td>
+  </tr>
+</table>
+
+
 ** CAPTURA ERROR ARCHIVO **
 
 
