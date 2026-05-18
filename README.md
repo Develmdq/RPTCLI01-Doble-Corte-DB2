@@ -32,8 +32,8 @@ NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS (variab
 *----------------------------------------------------------------------------------------------------------------------------------*
 
 ```mermaid
-graph TD
-   %% Configuración de Colores Profesionales
+graph LR
+    %% Configuración de Colores Profesionales
     classDef inicio_fin fill:#333,stroke:#000,color:#fff,stroke-width:2px;
     classDef proceso fill:#f4f4f4,stroke:#666,color:#000;
     classDef db2 fill:#d1e9ff,stroke:#005fb8,color:#000;
@@ -90,6 +90,19 @@ graph TD
 ```
 
 <br>
+
+<table>
+  <tr>
+    <td align="center"><b>EMULADOR WX3270</b></td>
+    <td align="center"><b>VSCODE + ZOWE</b></td>
+    <td align="center"><b>INTERFAZ WEB Z/OSMF</b></td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/d11e3686-0a4d-4495-acd1-7fbd8b673a77" width="100%" alt="wx3270" /></td>
+    <td><img src="https://github.com/user-attachments/assets/89a2b0f1-021f-47fa-bbf0-9cc16910cd19" width="100%" alt="VS Code + Zowe" /></td>
+    <td><img src="https://github.com/user-attachments/assets/cc01cc14-13fc-4367-8e35-deb959d144b2" width="100%" alt="z/OSMF" /></td>
+  </tr>
+</table>
 
 <table>
   <tr>
