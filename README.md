@@ -89,8 +89,8 @@ graph LR
     class OpenCursor,NextRead,FirstRead db2;
 ```
 
-<br>
 **CAPTURA DE SALIDA: REPORTE FINAL GENERADO EN ARCHIVO FÍSICO**   
+
 <table>
   <tr>
     <td align="center"><b>EMULADOR WX3270</b></td>
@@ -118,11 +118,7 @@ graph LR
 </table>
 
 
-** CAPTURA ERROR ARCHIVO **
 
-
-<br>
-** CAPTURA ERROR SQL **
 
 
 
