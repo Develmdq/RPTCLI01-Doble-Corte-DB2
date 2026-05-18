@@ -106,14 +106,13 @@ graph LR
 
 **CAPTURA DE SALIDA: REGISTRO DE ERROR EN SYSOUT (RUTINA 2300)**   
 
-<table>
-  <!-- BLOQUE 1: EMULADOR WX3270 -->
+<table> 
   <tr>
-    <th colspan="2" align="center" bgcolor="#222"><font color="#fff"><b>CAPTURA DE SALIDA: EMULADOR WX3270</b></font></th>
+    <th colspan="2" align="center" bgcolor="#222"><font color="#fff"><b>CAPTURA DE SALIDA: Reporte de Error SQL</b></font></th>
   </tr>
   <tr>
-    <td align="center" width="50%"><b>Reporte de Error SQL</b></td>
-    <td align="center" width="50%"><b>Reporte File Status</b></td>
+    <td align="center" width="50%"><b>EMULADOR WX3270</b></td>
+    <td align="center" width="50%"><b>VSCODE + ZOWE</b></td>
   </tr>
   <tr>
     <td><img src="https://github.com/user-attachments/assets/ba9932b1-f525-4a89-b37e-2132876441c4" width="100%" alt="wx3270 SQL" /></td>   
@@ -125,11 +124,11 @@ graph LR
 
   <!-- BLOQUE 2: VSCODE + ZOWE -->
   <tr>
-    <th colspan="2" align="center" bgcolor="#222"><font color="#fff"><b>CAPTURA DE SALIDA: VSCODE + ZOWE</b></font></th>
+    <th colspan="2" align="center" bgcolor="#222"><font color="#fff"><b>CAPTURA DE SALIDA: Reporte File Status</b></font></th>
   </tr>
   <tr>
-    <td align="center"><b>Reporte de Error SQL</b></td>
-    <td align="center"><b>Reporte File Status</b></td>
+    <td align="center" width="50%"><b>EMULADOR WX3270</b></td>
+    <td align="center" width="50%"><b>VSCODE + ZOWE</b></td>
   </tr>
   <tr>
     <td><img src="https://github.com/user-attachments/assets/a911b9b8-62bc-44ee-9a78-6171d0c23a57" width="100%" alt="Zowe SQL" /></td>   
