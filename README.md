@@ -26,9 +26,9 @@ eliminando la necesidad de interpretar códigos numéricos.
 *----------------------------------------------------------------------------------------------------------------------------------*   
 NOTA SOBRE EL USO DE GO TO:
 Su uso esta **segmentado exclusivamente** para manejar el flujo de ejecución dentro del **estado de error**.
-No interfiere en el flujo de la lógica de negocio, el cual respeta la programación estructurada y la ejecución TOP-DOWN.
+No interfiere en el flujo de la lógica de negocio, el cual respeta la programación estructurada y la ejecución TOP-DOWN.   
 *----------------------------------------------------------------------------------------------------------------------------------*   
-NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS (variable de la COPY de rutina de error), eliminando el MOVE intermedio y estandarizando el manejo de errores en todos los programas que adopten esta arquitectura.
+NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS (variable de la COPY de rutina de error), eliminando el MOVE intermedio y estandarizando el manejo de errores en todos los programas que adopten esta arquitectura.   
 *----------------------------------------------------------------------------------------------------------------------------------*
 
 ```mermaid
