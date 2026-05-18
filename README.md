@@ -88,20 +88,6 @@ graph TD
     class ErrRoutine,CallErr error;
     class OpenCursor,NextRead,FirstRead db2;
 ```
-<br>
-** CAPTURA DE SALIDA EMULADOR WX3270 **
-
-<img width="1597" height="859" alt="Sin título" src="https://github.com/user-attachments/assets/d11e3686-0a4d-4495-acd1-7fbd8b673a77" />
-
-<br>
-** CAPTURA DE SALIDA VSCODE + ZOWE **
-
-<img width="1597" height="861" alt="Sin título (1)" src="https://github.com/user-attachments/assets/89a2b0f1-021f-47fa-bbf0-9cc16910cd19" />
-
-<br>
-** CAPTURA DE SALIDA interfaz web de z/OSMF (z/OS Management Facility) **
-
-<img width="1595" height="745" alt="Sin título (2)" src="https://github.com/user-attachments/assets/cc01cc14-13fc-4367-8e35-deb959d144b2" />
 
 <br>
 
