@@ -58,13 +58,13 @@
           88 PGM-FIN                        VALUE 'F'.
 
       * INDICADOR DE OPERACION EN CURSO *
-       01 WS-OPERACION          PIC X(1)    VALUE SPACE.
-          88 ABRIENDO-ARCHIVO               VALUE 'O'.
-          88 GRABANDO-ARCHIVO               VALUE 'W'.
-          88 CERRANDO-ARCHIVO               VALUE 'C'.
-          88 ABRIENDO-CURSOR                VALUE 'O'.
-          88 LEYENDO-CURSOR                 VALUE 'R'.
-          88 CERRANDO-CURSOR                VALUE 'C'.
+       01 WS-OPERACION          PIC X(2)    VALUE SPACE.
+          88 ABRIENDO-ARCHIVO               VALUE 'OF'.
+          88 GRABANDO-ARCHIVO               VALUE 'WF'.
+          88 CERRANDO-ARCHIVO               VALUE 'CF'.
+          88 ABRIENDO-CURSOR                VALUE 'OC'.
+          88 LEYENDO-CURSOR                 VALUE 'FC'.
+          88 CERRANDO-CURSOR                VALUE 'CC'.
 
       * INDICADOR DE LINEA A IMPRIMIR *
        01 WS-IND-LINEA          PIC 9       VALUE ZEROS.
@@ -192,7 +192,6 @@
            EXEC SQL OPEN EMPDEPT-CURSOR END-EXEC
            INITIALIZE WS-CONTADORES-ACUMULADORES
            PERFORM 2100-I-LEER-CURSOR THRU  2100-F-LEER-CURSOR
-
            .
        1000-F-INICIO.
            EXIT.
@@ -200,7 +199,6 @@
       *                 CUERPO PRINCIPAL DE PROCESOS                   *
       ******************************************************************
        2000-I-PROCESO.
-
            SET IND-TITULO TO TRUE                     *> Grabar titulo
            PERFORM 2200-I-PROC-SALIDA THRU 2200-F-PROC-SALIDA
           *> ---------------| INICIO PERFORM EXTERIOR |---------------<*
@@ -243,7 +241,6 @@
        2000-F-PROCESO. EXIT.
 
        2100-I-LEER-CURSOR.
-
            SET LEYENDO-CURSOR TO TRUE
 
                EXEC SQL FETCH EMPDEPT-CURSOR
@@ -276,7 +273,6 @@
        2100-F-LEER-CURSOR.  EXIT.
 
        2200-I-PROC-SALIDA.
-
            SET GRABANDO-ARCHIVO TO TRUE
 
            EVALUATE TRUE
@@ -397,9 +393,26 @@
        2270-F-GRABAR-TOTAL.  EXIT.
 
        2300-INVOCAR-RUTINA-ERROR.
+           EXEC SQL WHENEVER SQLERROR CONTINUE END-EXEC
            MOVE 'RPTCLI01'   TO WS-ERR-PROGRAMA
            MOVE SQLCA        TO WS-ERR-SQLCA
            MOVE 9999         TO RETURN-CODE
+
+           EVALUATE TRUE
+              WHEN ABRIENDO-ARCHIVO
+               SET ERR-ABRIR-ARCHIVO  TO TRUE
+              WHEN GRABANDO-ARCHIVO
+               SET ERR-GRABAR-ARCHIVO TO TRUE
+              WHEN CERRANDO-ARCHIVO
+               SET ERR-CERRAR-ARCHIVO TO TRUE
+              WHEN ABRIENDO-CURSOR
+               SET ERR-ABRIR-CURSOR   TO TRUE
+              WHEN LEYENDO-CURSOR
+               SET ERR-FETCH-CURSOR   TO TRUE
+              WHEN CERRANDO-CURSOR
+               SET ERR-CERRAR-CURSOR  TO TRUE
+           END-EVALUATE
+
            CALL 'RUTERRBA'   USING WS-ERROR
            SET PGM-FIN       TO TRUE
 
