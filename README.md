@@ -30,56 +30,7 @@ No interfiere en el flujo de la lógica de negocio, el cual respeta la programac
 *----------------------------------------------------------------------------------------------------------------------------------*   
 NOTA SOBRE FILE STATUS: se declara directamente sobre WS-ERR-FILE-STATUS (variable de la COPY de rutina de error), eliminando el MOVE intermedio y estandarizando el manejo de errores en todos los programas que adopten esta arquitectura.   
 *----------------------------------------------------------------------------------------------------------------------------------*
-```mermaid
-graph TD
-    %% Configuración Estética Profesional
-    classDef inicio_fin fill:#333,stroke:#303030,color:#fff,stroke-width:2px;
-    classDef proceso fill:#f9f9f9,stroke:#888,color:#222;
-    classDef db2 fill:#def0ff,stroke:#0066cc,color:#003366,stroke-dasharray: 3 3;
-    classDef error fill:#fff0f0,stroke:#cc0000,color:#cc0000;
-    Start((Inicio)) --> 1000[1000-INICIO]
 
-    subgraph Bloque_Inicialización [1) Inicialización]
-        1000 --> OpenFile[Abrir Archivo SALIDA]
-        OpenFile --> OpenCursor[EXEC SQL OPEN Cursor]
-        OpenCursor --> 2100-F[2100-LEER-CURSOR]
-    end
-
-    2100-F --> Loop{¿PGM-FIN?}
-
-    subgraph Bloque_Proceso [2) Núcleo: Doble Corte de Control]
-        Loop -- No --> Title[Grabar Títulos]
-        Title --> DeptLoop{¿Mismo Depto?}
-        
-        DeptLoop -- Sí --> SexLoop{¿Mismo Sexo?}
-        SexLoop -- Sí --> Detail[Grabar Detalle]
-        Detail --> 2100-N[2100-LEER-CURSOR]
-        2100-N --> SexLoop
-
-        SexLoop -- No --> SubSex[Grabar Subtotal Sexo]
-        SubSex --> DeptLoop
-
-        DeptLoop -- No --> SubDept[Grabar Subtotal Depto]
-        SubDept --> Loop
-    end
-
-    Loop -- Sí --> 3000[3000-FINAL]
-
-    subgraph Bloque_Cierre [3) Cierre Ordenado]
-        3000 --> CloseAll[Cerrar SALIDA y Cursor]
-        CloseAll --> Stop((GOBACK))
-    end
-
-    subgraph Bloque_Excepciones [Manejo de Errores Global]
-        ErrRoutine[2300-INVOCAR-RUTINA-ERROR] --> CallErr[CALL PGMERROR]
-        CallErr --> SetFin[SET PGM-FIN TO TRUE]
-        SetFin --> 3000
-    end
-    %% Aplicación de Estilos
-    class Start,Stop inicio_fin;
-    class OpenCursor,2100-F,2100-N db2;
-    class ErrRoutine,CallErr,SetFin error;
-```
 <img width="2041" height="4757" alt="mermaid-diagram-2026-05-18-180241 (1)" src="https://github.com/user-attachments/assets/b6b57bfd-1d7f-4e3e-b0d0-ee85be009778" />
 
 
