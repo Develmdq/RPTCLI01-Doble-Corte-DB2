@@ -37,7 +37,6 @@ graph TD
     classDef proceso fill:#f9f9f9,stroke:#888,color:#222;
     classDef db2 fill:#def0ff,stroke:#0066cc,color:#003366,stroke-dasharray: 3 3;
     classDef error fill:#fff0f0,stroke:#cc0000,color:#cc0000;
-
     Start((Inicio)) --> 1000[1000-INICIO]
 
     subgraph Bloque_Inicialización [1) Inicialización]
@@ -76,12 +75,10 @@ graph TD
         CallErr --> SetFin[SET PGM-FIN TO TRUE]
         SetFin --> 3000
     end
-
     %% Aplicación de Estilos
     class Start,Stop inicio_fin;
     class OpenCursor,2100-F,2100-N db2;
     class ErrRoutine,CallErr,SetFin error;
-
 ```
 <img width="2041" height="4757" alt="mermaid-diagram-2026-05-18-180241 (1)" src="https://github.com/user-attachments/assets/b6b57bfd-1d7f-4e3e-b0d0-ee85be009778" />
 
