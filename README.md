@@ -107,13 +107,26 @@ graph LR
 **CAPTURA DE SALIDA: REGISTRO DE ERROR EN SYSOUT (RUTINA 2300)**   
 
 <table>
+  <!-- Primera fila: Títulos principales de las herramientas -->
   <tr>
-    <td align="center"><b>EMULADOR WX3270</b></td>
-    <td align="center"><b>VSCODE + ZOWE</b></td>
+    <th colspan="2" align="center"><b>EMULADOR WX3270</b></th>
+    <th colspan="2" align="center"><b>VSCODE + ZOWE</b></th>
   </tr>
+  
+  <!-- Segunda fila: Subtítulos de los tipos de error -->
   <tr>
-    <td><img width="1319" height="819" alt="err2 (1)" src="https://github.com/user-attachments/assets/ba9932b1-f525-4a89-b37e-2132876441c4" /></td>   
-    <td><img width="1329" height="821" alt="err1 (1)" src="https://github.com/user-attachments/assets/27cc499a-fdbb-4da8-8238-133724293f2a" /></td>
+    <td align="center" style="color: #666;"><i>Reporte de Error SQL</i></td>
+    <td align="center" style="color: #666;"><i>Reporte File Status</i></td>
+    <td align="center" style="color: #666;"><i>Reporte de Error SQL</i></td>
+    <td align="center" style="color: #666;"><i>Reporte File Status</i></td>
+  </tr>
+  
+  <!-- Tercera fila: Las 4 capturas redimensionadas automáticamente -->
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/ba9932b1-f525-4a89-b37e-2132876441c4" width="100%" alt="wx3270 SQL" /></td>   
+    <td><img src="https://github.com/user-attachments/assets/27cc499a-fdbb-4da8-8238-133724293f2a" width="100%" alt="wx3270 File Status" /></td>
+    <td><img src="https://github.com/user-attachments/assets/a911b9b8-62bc-44ee-9a78-6171d0c23a57" width="100%" alt="Zowe SQL" /></td>   
+    <td><img src="https://github.com/user-attachments/assets/e9fc5537-4cba-4064-ac40-794da138b985" width="100%" alt="Zowe File Status" /></td>
   </tr>
 </table>
 
