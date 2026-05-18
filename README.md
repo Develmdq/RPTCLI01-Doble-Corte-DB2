@@ -1,5 +1,3 @@
-<img width="1329" height="821" alt="err1 (1)" src="https://github.com/user-attachments/assets/093f932a-186c-486e-b964-e1736e911e1e" />
-<img width="1319" height="819" alt="err2 (1)" src="https://github.com/user-attachments/assets/2e8c1dcf-c4e5-4e59-b2e9-d113f4effe8a" />
 🔂 Proyecto como parte de mi especialización en **COBOL**.
 
 Descripción:
