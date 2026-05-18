@@ -104,6 +104,8 @@ graph LR
   </tr>
 </table>
 
+**CAPTURA DE SALIDA: REGISTRO DE ERROR EN SYSOUT (RUTINA 2300)**   
+
 <table>
   <tr>
     <td align="center"><b>EMULADOR WX3270</b></td>
@@ -111,9 +113,8 @@ graph LR
     <td align="center"><b>INTERFAZ WEB Z/OSMF</b></td>
   </tr>
   <tr>
-    <td><img src="https://github.com/user-attachments/assets/d11e3686-0a4d-4495-acd1-7fbd8b673a77" width="100%" alt="wx3270" /></td>
-    <td><img src="https://github.com/user-attachments/assets/89a2b0f1-021f-47fa-bbf0-9cc16910cd19" width="100%" alt="VS Code + Zowe" /></td>
-    <td><img src="https://github.com/user-attachments/assets/cc01cc14-13fc-4367-8e35-deb959d144b2" width="100%" alt="z/OSMF" /></td>
+    <img width="1319" height="819" alt="err2 (1)" src="https://github.com/user-attachments/assets/ba9932b1-f525-4a89-b37e-2132876441c4" />   
+    <img width="1329" height="821" alt="err1 (1)" src="https://github.com/user-attachments/assets/27cc499a-fdbb-4da8-8238-133724293f2a" />
   </tr>
 </table>
 
@@ -123,8 +124,7 @@ graph LR
 
 <br>
 ** CAPTURA ERROR SQL **
-<img width="1319" height="819" alt="err2 (1)" src="https://github.com/user-attachments/assets/ba9932b1-f525-4a89-b37e-2132876441c4" />   
-<img width="1329" height="821" alt="err1 (1)" src="https://github.com/user-attachments/assets/27cc499a-fdbb-4da8-8238-133724293f2a" />
+
 
 
 
