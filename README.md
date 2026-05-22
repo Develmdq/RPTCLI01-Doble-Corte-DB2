@@ -20,17 +20,17 @@ El problema se resuelve combinando tres capas:
 
 * Estructura de INICIO-PROCESO-FINAL;
 * Manejo de estados x medio de niveles 88;
-* Uso de CURSOR SQL;
 * Paginado automático x medio de LINAGE COUNTER;
-* Centrado dinámico de subtítulos mediante FUNCTION TRIM y FUNCTION LENGTH
+* Centrado dinámico de subtítulos mediante FUNCTION TRIM y FUNCTION LENGTH;
 * Doble corte de control x medio de PERFORM-INLINE;
 * Captura de fecha x medio de Función Intrínseca;
 * Manejo de errores centralizado en un subprograma (rutina) reutilizable mediante
 código defensivo para evitar ABENDs — el programa intercepta errores en cada
 punto crítico (ON SIZE ERROR, DECLARATIVES, WHENEVER, variable indicadora de DB2, IS NUMERIC, ETC).
 Ante cualquier error: cierra lo que se pueda cerrar, emite un mensaje detallado
-por DISPLAY y termina con RC 12 para que el operador sepa exactamente qué pasó
-y dónde.
+por DISPLAY y termina con RC 12 para que el operador sepa exactamente qué pasó y dónde;
+* Uso de CURSOR SQL;
+* Optimización de performance en DB2 mediante la cláusula FOR FETCH ONLY;
 * Integración con **DSNTIAR** — ante errores DB2, el programa pasa el SQLCA
 completo a la rutina (RUTERRBA), que internamente invoca la rutina IBM DSNTIAR para
 formatear el mensaje de error en texto legible por el operador en el spool,

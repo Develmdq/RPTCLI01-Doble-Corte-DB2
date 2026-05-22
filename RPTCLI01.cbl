@@ -129,6 +129,7 @@
                     IBMUSER.DEPT D
                WHERE E.WORKDEPT = D.DEPTNO
                ORDER BY E.WORKDEPT, E.SEX
+               FOR FETCH ONLY
            END-EXEC.
 
       * COPYs ARCHIVO DE SALIDA y ESTRUCTURA DE ERRORES  *
