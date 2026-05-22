@@ -255,7 +255,7 @@
 
            IF SQLCODE = +100 AND WS-CNT-LEIDOS = 0
               DISPLAY 'QUERY SIN DATOS EN EL 1º FETCH'
-              MOVE 9999  TO RETURN-CODE
+              MOVE 12     TO RETURN-CODE
               SET PGM-FIN TO TRUE
            END-IF
 
@@ -408,7 +408,7 @@
            EXEC SQL WHENEVER SQLERROR CONTINUE END-EXEC
            MOVE 'RPTCLI01'   TO WS-ERR-PROGRAMA
            MOVE SQLCA        TO WS-ERR-SQLCA
-           MOVE 9999         TO RETURN-CODE
+           MOVE 12           TO RETURN-CODE
 
            EVALUATE TRUE
               WHEN ABRIENDO-ARCHIVO
@@ -461,7 +461,7 @@
       *                    CUERPO PRINCIPAL FINAL                      *
       ******************************************************************
        3000-I-FINAL.
-           IF RETURN-CODE = 9999
+           IF RETURN-CODE = 12
               EVALUATE TRUE
                  WHEN ABRIENDO-ARCHIVO
                    CONTINUE
