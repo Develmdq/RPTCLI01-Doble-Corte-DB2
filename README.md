@@ -125,5 +125,53 @@ graph TD
 <img width="1319" height="819" alt="err2 (1)" src="https://github.com/user-attachments/assets/ba9932b1-f525-4a89-b37e-2132876441c4" />
 <img width="1329" height="821" alt="err1 (1)" src="https://github.com/user-attachments/assets/27cc499a-fdbb-4da8-8238-133724293f2a" />
 
+<img width="2041" height="4757" alt="mermaid-diagram-2026-05-18-180241 (1)" src="https://github.com/user-attachments/assets/b6b57bfd-1d7f-4e3e-b0d0-ee85be009778" />
 
+
+**CAPTURA DE SALIDA: REPORTE FINAL GENERADO EN ARCHIVO FÍSICO**
+
+<table>
+  <tr>
+    <td align="center"><b>EMULADOR WX3270</b></td>
+    <td align="center"><b>VSCODE + ZOWE</b></td>
+    <td align="center"><b>INTERFAZ WEB Z/OSMF</b></td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/d11e3686-0a4d-4495-acd1-7fbd8b673a77" width="100%" alt="wx3270" /></td>
+    <td><img src="https://github.com/user-attachments/assets/89a2b0f1-021f-47fa-bbf0-9cc16910cd19" width="100%" alt="VS Code + Zowe" /></td>
+    <td><img src="https://github.com/user-attachments/assets/cc01cc14-13fc-4367-8e35-deb959d144b2" width="100%" alt="z/OSMF" /></td>
+  </tr>
+</table>
+
+**CAPTURA DE SALIDA: REGISTRO DE ERROR EN SYSOUT (RUTINA 2300)**
+
+<table>
+  <tr>
+    <th colspan="2" align="center" bgcolor="#222"><font color="#fff"><b>CAPTURA DE SALIDA: Reporte de Error SQL</b></font></th>
+  </tr>
+  <tr>
+    <td align="center" width="50%"><b>EMULADOR WX3270</b></td>
+    <td align="center" width="50%"><b>VSCODE + ZOWE</b></td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/ba9932b1-f525-4a89-b37e-2132876441c4" width="100%" alt="wx3270 SQL" /></td>
+    <td><img src="https://github.com/user-attachments/assets/27cc499a-fdbb-4da8-8238-133724293f2a" width="100%" alt="wx3270 File Status" /></td>
+  </tr>
+
+  <!-- ESPACIO INTERMEDIO -->
+  <tr><td colspan="2" style="border:none; height:20px;"></td></tr>
+
+  <!-- BLOQUE 2: VSCODE + ZOWE -->
+  <tr>
+    <th colspan="2" align="center" bgcolor="#222"><font color="#fff"><b>CAPTURA DE SALIDA: Reporte File Status</b></font></th>
+  </tr>
+  <tr>
+    <td align="center" width="50%"><b>EMULADOR WX3270</b></td>
+    <td align="center" width="50%"><b>VSCODE + ZOWE</b></td>
+  </tr>
+  <tr>
+    <td><img src="https://github.com/user-attachments/assets/a911b9b8-62bc-44ee-9a78-6171d0c23a57" width="100%" alt="Zowe SQL" /></td>
+    <td><img src="https://github.com/user-attachments/assets/e9fc5537-4cba-4064-ac40-794da138b985" width="100%" alt="Zowe File Status" /></td>
+  </tr>
+</table>
 
