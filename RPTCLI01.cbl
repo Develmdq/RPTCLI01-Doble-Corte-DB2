@@ -128,6 +128,7 @@
                FROM IBMUSER.EMP E,
                     IBMUSER.DEPT D
                WHERE E.WORKDEPT = D.DEPTNO
+               AND E.WORKDEPT IS NOT NULL
                ORDER BY E.WORKDEPT, E.SEX
                FOR FETCH ONLY
            END-EXEC.
