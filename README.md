@@ -29,7 +29,7 @@ El problema se resuelve combinando tres capas:
 código defensivo para evitar ABENDs — el programa intercepta errores en cada
 punto crítico (ON SIZE ERROR, DECLARATIVES, WHENEVER, variable indicadora de DB2, IS NUMERIC, ETC).
 Ante cualquier error: cierra lo que se pueda cerrar, emite un mensaje detallado
-por DISPLAY y termina con RC 9999 para que el operador sepa exactamente qué pasó
+por DISPLAY y termina con RC 12 para que el operador sepa exactamente qué pasó
 y dónde.
 * Integración con **DSNTIAR** — ante errores DB2, el programa pasa el SQLCA
 completo a la rutina (RUTERRBA), que internamente invoca la rutina IBM DSNTIAR para
