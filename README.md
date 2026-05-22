@@ -1,9 +1,22 @@
-🔂 Proyecto como parte de mi especialización en **COBOL**.
+🔂 Programa **COBOL Batch** (DB2).
 
-Descripción:
-Programa **Batch COBOL/DB2** desarrollado para entorno Mainframe (z/OS). El módulo ejecuta una consulta relacional mediante un JOIN de tablas y procesa los datos aplicando lógica de **Doble Corte de Control**, generando un reporte que muestra totalizadores y promedios.
+**Qué resuelve**
+Genera un reporte batch desde DB2 con datos agrupados, totales y promedios, usando lógica de doble corte de control.
 
-Algunos puntos de diseño en el código:
+**Enfoque de solución**
+El problema se resuelve combinando tres capas:
+
+1. Acceso a datos
+   → SQL con CURSOR sobre DB2
+
+2. Procesamiento en COBOL
+   → lógica de doble corte de control
+   → manejo de estados con niveles 88
+
+3. Presentación
+   → reporte paginado con LINAGE COUNTER
+
+**Algunos puntos de diseño en el código**
 
 * Estructura de INICIO-PROCESO-FINAL;
 * Manejo de estados x medio de niveles 88;
@@ -109,7 +122,7 @@ graph TD
 
 <br>
 ** CAPTURA ERROR SQL **
-<img width="1319" height="819" alt="err2 (1)" src="https://github.com/user-attachments/assets/ba9932b1-f525-4a89-b37e-2132876441c4" />   
+<img width="1319" height="819" alt="err2 (1)" src="https://github.com/user-attachments/assets/ba9932b1-f525-4a89-b37e-2132876441c4" />
 <img width="1329" height="821" alt="err1 (1)" src="https://github.com/user-attachments/assets/27cc499a-fdbb-4da8-8238-133724293f2a" />
 
 
