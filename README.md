@@ -1,4 +1,4 @@
-<h2>🔂 Programa COBOL Batch (DB2)</h2>
+<h2>Programa COBOL Batch (DB2)</h2>   
 [![Documentation](https://img.shields.io/badge/docs-READ%20NOW-2ea44f?style=flat-squarefor-the-badge&logo=readthedocs&logoColor=white)](https://develmdq.github.io/docs/rprte-depto-sexo.html)
 ![License](https://img.shields.io/badge/license-MIT-3fb950?style=flat-square)
 
