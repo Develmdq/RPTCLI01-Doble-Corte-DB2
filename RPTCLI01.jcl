@@ -1,4 +1,22 @@
 //CMPRPT   JOB 1,NOTIFY=&SYSUID
+//* =================================================================
+//*>**
+//*= JOB: CMPRPT - Genera reporte de ventas desde DB2
+//* @autor: Eduardo Marcet
+//* @fecha: 2026-01-15
+//* @version:      1.0
+//* @licencia:     MIT
+//*-
+//*-* DESCRIPCIÓN:
+//*  Este job compila el programa COBOL RPTCLI01 (que accede a DB2),
+//*  elimina el archivo de salida si existía previamente, y ejecuta
+//*  el programa generando un reporte en &SYSUID..REPORT.SALIDA.
+//*-* DEPENDENCIAS:
+//* @output: DDNAME_SALIDA   DDSALE
+//*   - DB2 subsystem: DBDG
+//*   - Librerías: &SYSUID..SYSLIB, &SYSUID..DBRMLIB, &SYSUID..LOAD
+//*>**
+//* ================================================================
 //*-----------------------------------------------------------------
 //* PASO 1: COMPILAR
 //*-----------------------------------------------------------------

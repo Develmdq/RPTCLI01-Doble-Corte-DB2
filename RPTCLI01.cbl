@@ -2,23 +2,27 @@
        IDENTIFICATION DIVISION.
        PROGRAM-ID. RPTCLI01.
 
-      ******************************************************************
-      *       REPORTE DOBLE CORTE DE CONTROL - CLIENTES                *
-      ******************************************************************
-      * AUTOR : MARCET EDUARDO                      FECHA: 2026        *
-      ******************************************************************
-      * FUNCION:                                                       *
-      *   EJECUTA CONSULTA RELACIONAL MEDIANTE JOIN DE TABLAS DB2.     *
-      *   PROCESA LOS DATOS APLICANDO DOBLE CORTE DE CONTROL.          *
-      *   GENERA REPORTE CON TOTALIZADORES Y PROMEDIOS.                *
-      ******************************************************************
-      * NOTA SOBRE FILE STATUS:                                        *
-      *   DECLARADO DIRECTAMENTE SOBRE WS-ERR-FILE-STATUS DE LA COPY   *
-      *   CPERROR, ELIMINANDO EL MOVE INTERMEDIO Y                     *
-      *   ESTANDARIZANDO EL MANEJO DE ERRORES EN TODOS LOS             *
-      *   PROGRAMAS QUE ADOPTEN ESTA ARQUITECTURA.                     *
-      ******************************************************************
-
+      *>**
+      *=            REPORTE EMPLEADOS POR DEPTO Y SEXO
+      *- @autor:        Eduardo Marcet
+      *- @fecha:        2026-01-15
+      *- @version:      1.0
+      *- @licencia:     MIT
+      *- @modificacion: 2026-05-28
+      *- @input:  SYSIN    Parámetros de ejecución
+      *- @input:  TABLAS   Tablas DB2 EMP y DEPT
+      *- @output: SALIDA   Reporte paginado de salida
+      *- @change: 2026-01-15 EMarcet Versión inicial
+      *- @change: 2026-05-28 JPerez  Ajuste de formato de reporte
+      *- @see: RUTERRBA https://develmdq.github.io/docs/err-batch.html
+      *-
+      *-* FUNCIONALIDAD
+      * Genera un reporte de empleados agrupados por departamento y
+      * sexo, mostrando totales y promedios de salario.
+      * Ejecuta consulta relacional mediante JOIN de tablas DB2.
+      * Procesa los datos aplicando doble corte de control.
+      *-
+      *>**
       ******************************************************************
        ENVIRONMENT DIVISION.
       ******************************************************************
@@ -47,7 +51,6 @@
            LINAGE IS 60 LINES.
 
        01 REG-SALIDA            PIC X(72).
-
       *------------------------*
        WORKING-STORAGE SECTION.
       *------------------------*
@@ -133,6 +136,11 @@
                FOR FETCH ONLY
            END-EXEC.
 
+      *RUTINA DINAMICA
+       01 WS-RUTERRBA            PIC X(8)    VALUE 'RUTERRBA'.
+
+       77 FILLER                 PIC X(26)  VALUE '* INICIO COPYs *'.
+
       * COPYs ARCHIVO DE SALIDA y ESTRUCTURA DE ERRORES  *
        COPY CPRPT001.
        COPY CPERROR.
@@ -142,24 +150,24 @@
       ******************************************************************
        PROCEDURE DIVISION.
       ******************************************************************
-      *----------------------------------------------------------------*
-      * NOTA SOBRE EL USO DE GO TO:                                    *
-      * Su uso esta segmentado exclusivamente para manejar el flujo    *
-      * de ejecucion dentro del estado de error. No interfiere en el   *
-      * flujo de la logica de negocio, el cual respeta la              *
-      * programacion estructurada y la ejecucion TOP-DOWN.             *
-      *----------------------------------------------------------------*
-      *----------------------------------------------------------------*
-      * MANEJO DE ERRORES                                              *
-      * - DECLARATIVES: Captura errores de E/S en archivo de salida    *
-      * - WHENEVER SQLERROR: Captura errores SQL                       *
-      * En ambos casos se deriva a 2300-INVOCAR-RUTINA-ERROR que:      *
-      *   1. Carga WS-ERROR con el contexto del error                  *
-      *   2. Llama a RUTERRBA via CALL                                 *
-      *   3. Activa PGM-FIN para encauzar el flujo al cierre           *
-      * WS-OPERACION refleja el estado en curso al momento del error   *
-      * garantizando un cierre ordenado en 3000-FINAL                  *
-      *----------------------------------------------------------------*
+      *>**
+      *-* NOTA SOBRE EL USO DE GO TO
+      *- Su uso esta segmentado exclusivamente para manejar el flujo
+      *- de ejecucion dentro del estado de error. No interfiere en el
+      *- flujo de la logica de negocio, el cual respeta la
+      *- programacion estructurada y la ejecucion TOP-DOWN.
+      *>**
+      *>**
+      *-* MANEJO DE ERRORES
+      *- DECLARATIVES: Captura errores de E/S en archivo de salida
+      *- WHENEVER SQLERROR: Captura errores SQL
+      *- En ambos casos se deriva a 2300-INVOCAR-RUTINA-ERROR que:
+      *-   1. Carga WS-ERROR con el contexto del error
+      *-   2. Llama a RUTERRBA via CALL
+      *-   3. Activa PGM-FIN para encauzar el flujo al cierre
+      *- WS-OPERACION refleja el estado en curso al momento del error
+      *- garantizando un cierre ordenado en 3000-FINAL
+      *>**
        DECLARATIVES.
        ERROR-SALIDA SECTION.
            USE AFTER STANDARD ERROR PROCEDURE ON OUTPUT.
@@ -181,8 +189,20 @@
       ******************************************************************
       *                 CUERPO PRINCIPAL DE INICIO                     *
       ******************************************************************
-      * Por medio de niveles 88 de 01 WS-OPERACION + SET se crea un    *
-      * estado general y junto a EVALUATE TRUE se maneja el fujo.      *
+      *>**
+      *-* ESTADO DE LA APLICACION
+      *- El programa se estructura en torno a un estado general definido
+      * por niveles 88 de WS-OPERACION. Cada bloque de código relevante
+      * setea el estado x medio de SET. Esto permite:
+      *- 1. Identificar claramente la operación en curso en cualquier
+      * punto.
+      *- 2. Manejar errores de forma centralizada en
+      * 2300-INVOCAR-RUTINA-ERROR utilizando el estado para determinar
+      * el punto de retorno adecuado y garantizar un cierre ordenado.
+      *- 3. Mantener la lógica de negocio estructurada y legible,
+      * evitando el uso indiscriminado de GO TO, limitándolo
+      * exclusivamente al manejo y control por medio de EVALUATE TRUE.
+      *>**
       ******************************************************************
        1000-I-INICIO.
            MOVE FUNCTION CURRENT-DATE(1:8)  TO WS-FECHA-HORA
@@ -265,7 +285,7 @@
 
            IF SQLCODE = +100 SET PGM-FIN TO TRUE END-IF
 
-      * Control NULL en campor SALARY
+      * Control NULL en campo SALARY
            EVALUATE TRUE
               WHEN IND-SALARY < 0
               SET ERR-TIPO-DATO  TO TRUE
@@ -426,8 +446,7 @@
               WHEN CERRANDO-CURSOR
                SET ERR-CERRAR-CURSOR  TO TRUE
            END-EVALUATE
-
-           CALL 'RUTERRBA'   USING WS-ERROR
+           CALL WS-RUTERRBA   USING WS-ERROR
            SET PGM-FIN       TO TRUE
 
            EVALUATE TRUE
@@ -441,14 +460,15 @@
                    GO TO 3000-F-FINAL
            END-EVALUATE
            .
-      *----------------------------------------------------------------*
-      * 2900-CENTRAR-TEXTO                                             *
-      * Centra un texto dentro de un campo de 70 caracteres.           *
-      * 1. TRIM elimina espacios finales del texto                     *
-      * 2. LENGTH calcula la longitud real del texto                   *
-      * 3. PADDING = (70 - longitud) / 2 = espacios a la izquierda     *
-      * 4. Mueve el texto a la posicion calculada dentro del campo     *
-      *----------------------------------------------------------------*
+      *>**
+      *-* CENTRADO DE SUBTITULO DEPARTAMENTO
+      *-
+      *- Centra un texto dentro de un campo de 70 caracteres.
+      *- 1. TRIM elimina espacios finales del texto
+      *- 2. LENGTH calcula la longitud real del texto
+      *- 3. PADDING = (70 - longitud) / 2 = espacios a la izquierda
+      *- 4. Mueve el texto a la posicion calculada dentro del campo
+      *>**
        2400-I-CENTRAR-TEXTO.
            INITIALIZE WS-TEXTO-CENTRADO
            COMPUTE WS-LONG-TEXTO =
