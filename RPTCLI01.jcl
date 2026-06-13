@@ -1,7 +1,7 @@
 //CMPRPT   JOB 1,NOTIFY=&SYSUID
 //* =================================================================
 //*>**
-//*= JOB: CMPRPT - Genera reporte de ventas desde DB2
+//*= JOB: CMPRPT
 //* @autor: Eduardo Marcet
 //* @fecha: 2026-01-15
 //* @version:      1.0
